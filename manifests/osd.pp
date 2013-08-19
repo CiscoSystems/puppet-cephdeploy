@@ -1,10 +1,11 @@
 class cephdeploy::osd(
   $host,
-  $disk = [],
-)},
+  $server_disks = $::server_disks,
+) {
 
-  # create and run the OSD, why doesn't puppet have iterators?
-  define disks {
-    exec {"${title}":
-      cwd => '/var/tmp',
-      command => 
+  exec {'prepare OSD disks and activate OSD node':
+    cws     => '/etc/ceph',
+    command => "/usr/bin/ceph-deploy osd create ${server_disks}",
+    unless  => "ceph-deploy disk list ${host} | grep active",
+  }
+}
