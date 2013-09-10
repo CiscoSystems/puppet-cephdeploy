@@ -72,9 +72,9 @@ class cephdeploy(
     require => Exec['passwordless sudo for ceph deploy user'],
   }
 
-  package {'python-pip':
-    ensure => present,
-  }
+#  package {'python-pip':
+#    ensure => present,
+#  }
 
   package {'ceph-deploy':
     ensure   => present,
