@@ -1,0 +1,247 @@
+2013-09-10 10:58:34,819 [ceph_deploy.install][DEBUG ] Installing stable version dumpling on cluster ceph hosts ceph-deploy
+2013-09-10 10:58:34,819 [ceph_deploy.install][DEBUG ] Detecting platform for host ceph-deploy ...
+2013-09-10 10:58:34,963 [ceph_deploy.install][INFO  ] Distro info: Ubuntu 12.04 precise
+2013-09-10 10:58:34,964 [ceph-deploy][INFO  ] installing ceph on ceph-deploy
+2013-09-10 10:58:34,967 [ceph-deploy][INFO  ] Running command: env DEBIAN_FRONTEND=noninteractive apt-get -q install --assume-yes ca-certificates
+2013-09-10 10:58:35,439 [ceph-deploy][INFO  ] Reading package lists...
+2013-09-10 10:58:35,439 [ceph-deploy][INFO  ] Building dependency tree...
+2013-09-10 10:58:35,440 [ceph-deploy][INFO  ] Reading state information...
+2013-09-10 10:58:35,440 [ceph-deploy][INFO  ] ca-certificates is already the newest version.
+2013-09-10 10:58:35,441 [ceph-deploy][INFO  ] 0 upgraded, 0 newly installed, 0 to remove and 21 not upgraded.
+2013-09-10 10:58:35,443 [ceph-deploy][INFO  ] Running command: wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | apt-key add -
+2013-09-10 10:58:36,260 [ceph-deploy][INFO  ] OK
+2013-09-10 10:58:36,266 [ceph-deploy][INFO  ] add ceph deb repo to sources.list
+2013-09-10 10:58:36,275 [ceph-deploy][INFO  ] Running command: apt-get -q update
+2013-09-10 10:58:49,485 [ceph-deploy][INFO  ] Get:1 http://ceph.com precise Release.gpg [836 B]
+2013-09-10 10:58:49,485 [ceph-deploy][INFO  ] Get:2 http://security.ubuntu.com precise-security Release.gpg [198 B]
+2013-09-10 10:58:49,485 [ceph-deploy][INFO  ] Get:3 http://ceph.com precise Release [5856 B]
+2013-09-10 10:58:49,485 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise Release.gpg
+2013-09-10 10:58:49,486 [ceph-deploy][INFO  ] Get:4 http://security.ubuntu.com precise-security Release [49.6 kB]
+2013-09-10 10:58:49,486 [ceph-deploy][INFO  ] Get:5 http://us.archive.ubuntu.com precise-updates Release.gpg [198 B]
+2013-09-10 10:58:49,486 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports Release.gpg
+2013-09-10 10:58:49,487 [ceph-deploy][INFO  ] Get:6 http://ceph.com precise/main amd64 Packages [7041 B]
+2013-09-10 10:58:49,487 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise Release
+2013-09-10 10:58:49,487 [ceph-deploy][INFO  ] Get:7 http://us.archive.ubuntu.com precise-updates Release [49.6 kB]
+2013-09-10 10:58:49,488 [ceph-deploy][INFO  ] Get:8 http://ceph.com precise/main i386 Packages [6319 B]
+2013-09-10 10:58:49,488 [ceph-deploy][INFO  ] Ign http://ceph.com precise/main TranslationIndex
+2013-09-10 10:58:49,488 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports Release
+2013-09-10 10:58:49,489 [ceph-deploy][INFO  ] Ign http://ceph.com precise/main Translation-en
+2013-09-10 10:58:49,489 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/main Sources
+2013-09-10 10:58:49,489 [ceph-deploy][INFO  ] Get:9 http://security.ubuntu.com precise-security/main Sources [85.2 kB]
+2013-09-10 10:58:49,490 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/restricted Sources
+2013-09-10 10:58:49,490 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/universe Sources
+2013-09-10 10:58:49,490 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/multiverse Sources
+2013-09-10 10:58:49,491 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/main amd64 Packages
+2013-09-10 10:58:49,491 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/restricted amd64 Packages
+2013-09-10 10:58:49,491 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/universe amd64 Packages
+2013-09-10 10:58:49,491 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/multiverse amd64 Packages
+2013-09-10 10:58:49,492 [ceph-deploy][INFO  ] Get:10 http://security.ubuntu.com precise-security/restricted Sources [2494 B]
+2013-09-10 10:58:49,492 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/main i386 Packages
+2013-09-10 10:58:49,492 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/restricted i386 Packages
+2013-09-10 10:58:49,492 [ceph-deploy][INFO  ] Get:11 http://security.ubuntu.com precise-security/universe Sources [28.0 kB]
+2013-09-10 10:58:49,493 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/universe i386 Packages
+2013-09-10 10:58:49,493 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/multiverse i386 Packages
+2013-09-10 10:58:49,493 [ceph-deploy][INFO  ] Get:12 http://security.ubuntu.com precise-security/multiverse Sources [1803 B]
+2013-09-10 10:58:49,493 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/main TranslationIndex
+2013-09-10 10:58:49,493 [ceph-deploy][INFO  ] Get:13 http://security.ubuntu.com precise-security/main amd64 Packages [312 kB]
+2013-09-10 10:58:49,494 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/multiverse TranslationIndex
+2013-09-10 10:58:49,494 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/restricted TranslationIndex
+2013-09-10 10:58:49,494 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/universe TranslationIndex
+2013-09-10 10:58:49,494 [ceph-deploy][INFO  ] Get:14 http://us.archive.ubuntu.com precise-updates/main Sources [416 kB]
+2013-09-10 10:58:49,494 [ceph-deploy][INFO  ] Get:15 http://security.ubuntu.com precise-security/restricted amd64 Packages [4627 B]
+2013-09-10 10:58:49,494 [ceph-deploy][INFO  ] Get:16 http://security.ubuntu.com precise-security/universe amd64 Packages [81.3 kB]
+2013-09-10 10:58:49,494 [ceph-deploy][INFO  ] Get:17 http://security.ubuntu.com precise-security/multiverse amd64 Packages [2442 B]
+2013-09-10 10:58:49,495 [ceph-deploy][INFO  ] Get:18 http://security.ubuntu.com precise-security/main i386 Packages [331 kB]
+2013-09-10 10:58:49,495 [ceph-deploy][INFO  ] Get:19 http://us.archive.ubuntu.com precise-updates/restricted Sources [7031 B]
+2013-09-10 10:58:49,495 [ceph-deploy][INFO  ] Get:20 http://us.archive.ubuntu.com precise-updates/universe Sources [95.7 kB]
+2013-09-10 10:58:49,495 [ceph-deploy][INFO  ] Get:21 http://security.ubuntu.com precise-security/restricted i386 Packages [4620 B]
+2013-09-10 10:58:49,496 [ceph-deploy][INFO  ] Get:22 http://us.archive.ubuntu.com precise-updates/multiverse Sources [8358 B]
+2013-09-10 10:58:49,496 [ceph-deploy][INFO  ] Get:23 http://security.ubuntu.com precise-security/universe i386 Packages [84.5 kB]
+2013-09-10 10:58:49,496 [ceph-deploy][INFO  ] Get:24 http://us.archive.ubuntu.com precise-updates/main amd64 Packages [687 kB]
+2013-09-10 10:58:49,496 [ceph-deploy][INFO  ] Get:25 http://security.ubuntu.com precise-security/multiverse i386 Packages [2633 B]
+2013-09-10 10:58:49,497 [ceph-deploy][INFO  ] Hit http://security.ubuntu.com precise-security/main TranslationIndex
+2013-09-10 10:58:49,497 [ceph-deploy][INFO  ] Hit http://security.ubuntu.com precise-security/multiverse TranslationIndex
+2013-09-10 10:58:49,497 [ceph-deploy][INFO  ] Hit http://security.ubuntu.com precise-security/restricted TranslationIndex
+2013-09-10 10:58:49,498 [ceph-deploy][INFO  ] Hit http://security.ubuntu.com precise-security/universe TranslationIndex
+2013-09-10 10:58:49,498 [ceph-deploy][INFO  ] Hit http://security.ubuntu.com precise-security/main Translation-en
+2013-09-10 10:58:49,498 [ceph-deploy][INFO  ] Hit http://security.ubuntu.com precise-security/multiverse Translation-en
+2013-09-10 10:58:49,498 [ceph-deploy][INFO  ] Hit http://security.ubuntu.com precise-security/restricted Translation-en
+2013-09-10 10:58:49,499 [ceph-deploy][INFO  ] Hit http://security.ubuntu.com precise-security/universe Translation-en
+2013-09-10 10:58:49,499 [ceph-deploy][INFO  ] Get:26 http://us.archive.ubuntu.com precise-updates/restricted amd64 Packages [11.5 kB]
+2013-09-10 10:58:49,499 [ceph-deploy][INFO  ] Get:27 http://us.archive.ubuntu.com precise-updates/universe amd64 Packages [215 kB]
+2013-09-10 10:58:49,500 [ceph-deploy][INFO  ] Get:28 http://us.archive.ubuntu.com precise-updates/multiverse amd64 Packages [13.8 kB]
+2013-09-10 10:58:49,500 [ceph-deploy][INFO  ] Get:29 http://us.archive.ubuntu.com precise-updates/main i386 Packages [707 kB]
+2013-09-10 10:58:49,500 [ceph-deploy][INFO  ] Get:30 http://us.archive.ubuntu.com precise-updates/restricted i386 Packages [11.4 kB]
+2013-09-10 10:58:49,501 [ceph-deploy][INFO  ] Get:31 http://us.archive.ubuntu.com precise-updates/universe i386 Packages [219 kB]
+2013-09-10 10:58:49,501 [ceph-deploy][INFO  ] Get:32 http://us.archive.ubuntu.com precise-updates/multiverse i386 Packages [14.0 kB]
+2013-09-10 10:58:49,501 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-updates/main TranslationIndex
+2013-09-10 10:58:49,501 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-updates/multiverse TranslationIndex
+2013-09-10 10:58:49,501 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-updates/restricted TranslationIndex
+2013-09-10 10:58:49,501 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-updates/universe TranslationIndex
+2013-09-10 10:58:49,502 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/main Sources
+2013-09-10 10:58:49,502 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/restricted Sources
+2013-09-10 10:58:49,502 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/universe Sources
+2013-09-10 10:58:49,502 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/multiverse Sources
+2013-09-10 10:58:49,502 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/main amd64 Packages
+2013-09-10 10:58:49,502 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/restricted amd64 Packages
+2013-09-10 10:58:49,503 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/universe amd64 Packages
+2013-09-10 10:58:49,503 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/multiverse amd64 Packages
+2013-09-10 10:58:49,503 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/main i386 Packages
+2013-09-10 10:58:49,503 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/restricted i386 Packages
+2013-09-10 10:58:49,503 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/universe i386 Packages
+2013-09-10 10:58:49,503 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/multiverse i386 Packages
+2013-09-10 10:58:49,504 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/main TranslationIndex
+2013-09-10 10:58:49,504 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/multiverse TranslationIndex
+2013-09-10 10:58:49,504 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/restricted TranslationIndex
+2013-09-10 10:58:49,504 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/universe TranslationIndex
+2013-09-10 10:58:49,504 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/main Translation-en
+2013-09-10 10:58:49,504 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/multiverse Translation-en
+2013-09-10 10:58:49,505 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/restricted Translation-en
+2013-09-10 10:58:49,505 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise/universe Translation-en
+2013-09-10 10:58:49,505 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-updates/main Translation-en
+2013-09-10 10:58:49,505 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-updates/multiverse Translation-en
+2013-09-10 10:58:49,505 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-updates/restricted Translation-en
+2013-09-10 10:58:49,505 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-updates/universe Translation-en
+2013-09-10 10:58:49,506 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/main Translation-en
+2013-09-10 10:58:49,506 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/multiverse Translation-en
+2013-09-10 10:58:49,506 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/restricted Translation-en
+2013-09-10 10:58:49,506 [ceph-deploy][INFO  ] Hit http://us.archive.ubuntu.com precise-backports/universe Translation-en
+2013-09-10 10:58:49,506 [ceph-deploy][INFO  ] Fetched 3467 kB in 11s (311 kB/s)
+2013-09-10 10:58:49,507 [ceph-deploy][INFO  ] Reading package lists...
+2013-09-10 10:58:49,509 [ceph-deploy][INFO  ] Running command: env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -o Dpkg::Options::=--force-confnew install --no-install-recommends --assume-yes -- ceph ceph-mds ceph-common ceph-fs-common gdisk
+2013-09-10 10:59:28,221 [ceph-deploy][INFO  ] Reading package lists...
+2013-09-10 10:59:28,221 [ceph-deploy][INFO  ] Building dependency tree...
+2013-09-10 10:59:28,222 [ceph-deploy][INFO  ] Reading state information...
+2013-09-10 10:59:28,222 [ceph-deploy][INFO  ] The following extra packages will be installed:
+2013-09-10 10:59:28,222 [ceph-deploy][INFO  ]   binutils cryptsetup-bin libaio1 libboost-thread1.46.1 libcryptsetup4
+2013-09-10 10:59:28,222 [ceph-deploy][INFO  ]   libgoogle-perftools0 libicu48 libnspr4 libnss3 librados2 librbd1 libsnappy1
+2013-09-10 10:59:28,223 [ceph-deploy][INFO  ]   libtcmalloc-minimal0 libunwind7 python-ceph python-flask python-jinja2
+2013-09-10 10:59:28,223 [ceph-deploy][INFO  ]   python-markupsafe python-requests python-werkzeug xfsprogs
+2013-09-10 10:59:28,223 [ceph-deploy][INFO  ] Suggested packages:
+2013-09-10 10:59:28,223 [ceph-deploy][INFO  ]   binutils-doc python-jinja2-doc ipython python-genshi python-lxml
+2013-09-10 10:59:28,224 [ceph-deploy][INFO  ]   python-memcache libjs-sphinxdoc xfsdump acl attr quota
+2013-09-10 10:59:28,224 [ceph-deploy][INFO  ] Recommended packages:
+2013-09-10 10:59:28,224 [ceph-deploy][INFO  ]   btrfs-tools ceph-fuse libcephfs1 python-gevent
+2013-09-10 10:59:28,224 [ceph-deploy][INFO  ] The following NEW packages will be installed:
+2013-09-10 10:59:28,224 [ceph-deploy][INFO  ]   binutils ceph ceph-common ceph-fs-common ceph-mds cryptsetup-bin gdisk
+2013-09-10 10:59:28,224 [ceph-deploy][INFO  ]   libaio1 libboost-thread1.46.1 libcryptsetup4 libgoogle-perftools0 libicu48
+2013-09-10 10:59:28,224 [ceph-deploy][INFO  ]   libnspr4 libnss3 librados2 librbd1 libsnappy1 libtcmalloc-minimal0
+2013-09-10 10:59:28,224 [ceph-deploy][INFO  ]   libunwind7 python-ceph python-flask python-jinja2 python-markupsafe
+2013-09-10 10:59:28,225 [ceph-deploy][INFO  ]   python-requests python-werkzeug xfsprogs
+2013-09-10 10:59:28,225 [ceph-deploy][INFO  ] 0 upgraded, 26 newly installed, 0 to remove and 21 not upgraded.
+2013-09-10 10:59:28,225 [ceph-deploy][INFO  ] Need to get 48.9 MB of archives.
+2013-09-10 10:59:28,225 [ceph-deploy][INFO  ] After this operation, 210 MB of additional disk space will be used.
+2013-09-10 10:59:28,226 [ceph-deploy][INFO  ] Get:1 http://ceph.com/debian-dumpling/ precise/main librados2 amd64 0.67.3-1precise [1519 kB]
+2013-09-10 10:59:28,226 [ceph-deploy][INFO  ] Get:2 http://us.archive.ubuntu.com/ubuntu/ precise/main libaio1 amd64 0.3.109-2ubuntu1 [6396 B]
+2013-09-10 10:59:28,226 [ceph-deploy][INFO  ] Get:3 http://us.archive.ubuntu.com/ubuntu/ precise-updates/main libnspr4 amd64 4.9.5-0ubuntu0.12.04.1 [141 kB]
+2013-09-10 10:59:28,226 [ceph-deploy][INFO  ] Get:4 http://us.archive.ubuntu.com/ubuntu/ precise-updates/main libnss3 amd64 3.14.3-0ubuntu0.12.04.1 [1196 kB]
+2013-09-10 10:59:28,227 [ceph-deploy][INFO  ] Get:5 http://ceph.com/debian-dumpling/ precise/main librbd1 amd64 0.67.3-1precise [261 kB]
+2013-09-10 10:59:28,227 [ceph-deploy][INFO  ] Get:6 http://us.archive.ubuntu.com/ubuntu/ precise-updates/main binutils amd64 2.22-6ubuntu1.1 [2638 kB]
+2013-09-10 10:59:28,227 [ceph-deploy][INFO  ] Get:7 http://ceph.com/debian-dumpling/ precise/main python-ceph amd64 0.67.3-1precise [40.5 kB]
+2013-09-10 10:59:28,227 [ceph-deploy][INFO  ] Get:8 http://ceph.com/debian-dumpling/ precise/main ceph-common amd64 0.67.3-1precise [5737 kB]
+2013-09-10 10:59:28,228 [ceph-deploy][INFO  ] Get:9 http://us.archive.ubuntu.com/ubuntu/ precise/universe libboost-thread1.46.1 amd64 1.46.1-7ubuntu3 [39.5 kB]
+2013-09-10 10:59:28,228 [ceph-deploy][INFO  ] Get:10 http://us.archive.ubuntu.com/ubuntu/ precise/main python-werkzeug all 0.8.1+dfsg-1 [1321 kB]
+2013-09-10 10:59:28,228 [ceph-deploy][INFO  ] Get:11 http://us.archive.ubuntu.com/ubuntu/ precise/main python-markupsafe amd64 0.15-1 [13.6 kB]
+2013-09-10 10:59:28,229 [ceph-deploy][INFO  ] Get:12 http://us.archive.ubuntu.com/ubuntu/ precise/main python-jinja2 amd64 2.6-1 [158 kB]
+2013-09-10 10:59:28,229 [ceph-deploy][INFO  ] Get:13 http://us.archive.ubuntu.com/ubuntu/ precise/universe python-flask all 0.8-1 [71.2 kB]
+2013-09-10 10:59:28,229 [ceph-deploy][INFO  ] Get:14 http://us.archive.ubuntu.com/ubuntu/ precise/universe python-requests all 0.8.2-1 [49.0 kB]
+2013-09-10 10:59:28,230 [ceph-deploy][INFO  ] Get:15 http://us.archive.ubuntu.com/ubuntu/ precise/main libcryptsetup4 amd64 2:1.4.1-2ubuntu4 [55.8 kB]
+2013-09-10 10:59:28,230 [ceph-deploy][INFO  ] Get:16 http://us.archive.ubuntu.com/ubuntu/ precise/main cryptsetup-bin amd64 2:1.4.1-2ubuntu4 [32.2 kB]
+2013-09-10 10:59:28,230 [ceph-deploy][INFO  ] Get:17 http://us.archive.ubuntu.com/ubuntu/ precise/main libicu48 amd64 4.8.1.1-3 [8103 kB]
+2013-09-10 10:59:28,230 [ceph-deploy][INFO  ] Get:18 http://ceph.com/debian-dumpling/ precise/main ceph amd64 0.67.3-1precise [22.9 MB]
+2013-09-10 10:59:28,231 [ceph-deploy][INFO  ] Get:19 http://us.archive.ubuntu.com/ubuntu/ precise/universe gdisk amd64 0.8.1-1build1 [300 kB]
+2013-09-10 10:59:28,231 [ceph-deploy][INFO  ] Get:20 http://us.archive.ubuntu.com/ubuntu/ precise/main xfsprogs amd64 3.1.7 [1226 kB]
+2013-09-10 10:59:28,231 [ceph-deploy][INFO  ] Get:21 http://us.archive.ubuntu.com/ubuntu/ precise/universe libtcmalloc-minimal0 amd64 1.7-1ubuntu1 [147 kB]
+2013-09-10 10:59:28,232 [ceph-deploy][INFO  ] Get:22 http://us.archive.ubuntu.com/ubuntu/ precise/universe libunwind7 amd64 0.99-0.3ubuntu1 [49.6 kB]
+2013-09-10 10:59:28,232 [ceph-deploy][INFO  ] Get:23 http://us.archive.ubuntu.com/ubuntu/ precise/universe libgoogle-perftools0 amd64 1.7-1ubuntu1 [386 kB]
+2013-09-10 10:59:28,232 [ceph-deploy][INFO  ] Get:24 http://us.archive.ubuntu.com/ubuntu/ precise/universe libsnappy1 amd64 1.0.4-1build1 [12.8 kB]
+2013-09-10 10:59:28,232 [ceph-deploy][INFO  ] Get:25 http://ceph.com/debian-dumpling/ precise/main ceph-fs-common amd64 0.67.3-1precise [27.1 kB]
+2013-09-10 10:59:28,233 [ceph-deploy][INFO  ] Get:26 http://ceph.com/debian-dumpling/ precise/main ceph-mds amd64 0.67.3-1precise [2547 kB]
+2013-09-10 10:59:28,233 [ceph-deploy][INFO  ] Fetched 48.9 MB in 33s (1467 kB/s)
+2013-09-10 10:59:28,233 [ceph-deploy][INFO  ] Selecting previously unselected package libaio1.
+2013-09-10 10:59:28,233 [ceph-deploy][INFO  ] (Reading database ... 79587 files and directories currently installed.)
+2013-09-10 10:59:28,233 [ceph-deploy][INFO  ] Unpacking libaio1 (from .../libaio1_0.3.109-2ubuntu1_amd64.deb) ...
+2013-09-10 10:59:28,233 [ceph-deploy][INFO  ] Selecting previously unselected package libnspr4.
+2013-09-10 10:59:28,234 [ceph-deploy][INFO  ] Unpacking libnspr4 (from .../libnspr4_4.9.5-0ubuntu0.12.04.1_amd64.deb) ...
+2013-09-10 10:59:28,234 [ceph-deploy][INFO  ] Selecting previously unselected package libnss3.
+2013-09-10 10:59:28,234 [ceph-deploy][INFO  ] Unpacking libnss3 (from .../libnss3_3.14.3-0ubuntu0.12.04.1_amd64.deb) ...
+2013-09-10 10:59:28,234 [ceph-deploy][INFO  ] Selecting previously unselected package binutils.
+2013-09-10 10:59:28,234 [ceph-deploy][INFO  ] Unpacking binutils (from .../binutils_2.22-6ubuntu1.1_amd64.deb) ...
+2013-09-10 10:59:28,235 [ceph-deploy][INFO  ] Selecting previously unselected package libboost-thread1.46.1.
+2013-09-10 10:59:28,235 [ceph-deploy][INFO  ] Unpacking libboost-thread1.46.1 (from .../libboost-thread1.46.1_1.46.1-7ubuntu3_amd64.deb) ...
+2013-09-10 10:59:28,235 [ceph-deploy][INFO  ] Selecting previously unselected package librados2.
+2013-09-10 10:59:28,235 [ceph-deploy][INFO  ] Unpacking librados2 (from .../librados2_0.67.3-1precise_amd64.deb) ...
+2013-09-10 10:59:28,235 [ceph-deploy][INFO  ] Selecting previously unselected package librbd1.
+2013-09-10 10:59:28,235 [ceph-deploy][INFO  ] Unpacking librbd1 (from .../librbd1_0.67.3-1precise_amd64.deb) ...
+2013-09-10 10:59:28,236 [ceph-deploy][INFO  ] Selecting previously unselected package python-werkzeug.
+2013-09-10 10:59:28,236 [ceph-deploy][INFO  ] Unpacking python-werkzeug (from .../python-werkzeug_0.8.1+dfsg-1_all.deb) ...
+2013-09-10 10:59:28,236 [ceph-deploy][INFO  ] Selecting previously unselected package python-markupsafe.
+2013-09-10 10:59:28,236 [ceph-deploy][INFO  ] Unpacking python-markupsafe (from .../python-markupsafe_0.15-1_amd64.deb) ...
+2013-09-10 10:59:28,236 [ceph-deploy][INFO  ] Selecting previously unselected package python-jinja2.
+2013-09-10 10:59:28,237 [ceph-deploy][INFO  ] Unpacking python-jinja2 (from .../python-jinja2_2.6-1_amd64.deb) ...
+2013-09-10 10:59:28,237 [ceph-deploy][INFO  ] Selecting previously unselected package python-flask.
+2013-09-10 10:59:28,237 [ceph-deploy][INFO  ] Unpacking python-flask (from .../python-flask_0.8-1_all.deb) ...
+2013-09-10 10:59:28,237 [ceph-deploy][INFO  ] Selecting previously unselected package python-requests.
+2013-09-10 10:59:28,237 [ceph-deploy][INFO  ] Unpacking python-requests (from .../python-requests_0.8.2-1_all.deb) ...
+2013-09-10 10:59:28,237 [ceph-deploy][INFO  ] Selecting previously unselected package python-ceph.
+2013-09-10 10:59:28,238 [ceph-deploy][INFO  ] Unpacking python-ceph (from .../python-ceph_0.67.3-1precise_amd64.deb) ...
+2013-09-10 10:59:28,238 [ceph-deploy][INFO  ] Selecting previously unselected package ceph-common.
+2013-09-10 10:59:28,238 [ceph-deploy][INFO  ] Unpacking ceph-common (from .../ceph-common_0.67.3-1precise_amd64.deb) ...
+2013-09-10 10:59:28,238 [ceph-deploy][INFO  ] Selecting previously unselected package libcryptsetup4.
+2013-09-10 10:59:28,238 [ceph-deploy][INFO  ] Unpacking libcryptsetup4 (from .../libcryptsetup4_2%3a1.4.1-2ubuntu4_amd64.deb) ...
+2013-09-10 10:59:28,238 [ceph-deploy][INFO  ] Selecting previously unselected package cryptsetup-bin.
+2013-09-10 10:59:28,239 [ceph-deploy][INFO  ] Unpacking cryptsetup-bin (from .../cryptsetup-bin_2%3a1.4.1-2ubuntu4_amd64.deb) ...
+2013-09-10 10:59:28,239 [ceph-deploy][INFO  ] Selecting previously unselected package libicu48.
+2013-09-10 10:59:28,239 [ceph-deploy][INFO  ] Unpacking libicu48 (from .../libicu48_4.8.1.1-3_amd64.deb) ...
+2013-09-10 10:59:28,239 [ceph-deploy][INFO  ] Selecting previously unselected package gdisk.
+2013-09-10 10:59:28,239 [ceph-deploy][INFO  ] Unpacking gdisk (from .../gdisk_0.8.1-1build1_amd64.deb) ...
+2013-09-10 10:59:28,239 [ceph-deploy][INFO  ] Selecting previously unselected package xfsprogs.
+2013-09-10 10:59:28,240 [ceph-deploy][INFO  ] Unpacking xfsprogs (from .../xfsprogs_3.1.7_amd64.deb) ...
+2013-09-10 10:59:28,240 [ceph-deploy][INFO  ] Selecting previously unselected package libtcmalloc-minimal0.
+2013-09-10 10:59:28,240 [ceph-deploy][INFO  ] Unpacking libtcmalloc-minimal0 (from .../libtcmalloc-minimal0_1.7-1ubuntu1_amd64.deb) ...
+2013-09-10 10:59:28,240 [ceph-deploy][INFO  ] Selecting previously unselected package libunwind7.
+2013-09-10 10:59:28,240 [ceph-deploy][INFO  ] Unpacking libunwind7 (from .../libunwind7_0.99-0.3ubuntu1_amd64.deb) ...
+2013-09-10 10:59:28,241 [ceph-deploy][INFO  ] Selecting previously unselected package libgoogle-perftools0.
+2013-09-10 10:59:28,241 [ceph-deploy][INFO  ] Unpacking libgoogle-perftools0 (from .../libgoogle-perftools0_1.7-1ubuntu1_amd64.deb) ...
+2013-09-10 10:59:28,241 [ceph-deploy][INFO  ] Selecting previously unselected package libsnappy1.
+2013-09-10 10:59:28,241 [ceph-deploy][INFO  ] Unpacking libsnappy1 (from .../libsnappy1_1.0.4-1build1_amd64.deb) ...
+2013-09-10 10:59:28,241 [ceph-deploy][INFO  ] Selecting previously unselected package ceph.
+2013-09-10 10:59:28,241 [ceph-deploy][INFO  ] Unpacking ceph (from .../ceph_0.67.3-1precise_amd64.deb) ...
+2013-09-10 10:59:28,242 [ceph-deploy][INFO  ] Selecting previously unselected package ceph-fs-common.
+2013-09-10 10:59:28,242 [ceph-deploy][INFO  ] Unpacking ceph-fs-common (from .../ceph-fs-common_0.67.3-1precise_amd64.deb) ...
+2013-09-10 10:59:28,242 [ceph-deploy][INFO  ] Selecting previously unselected package ceph-mds.
+2013-09-10 10:59:28,242 [ceph-deploy][INFO  ] Unpacking ceph-mds (from .../ceph-mds_0.67.3-1precise_amd64.deb) ...
+2013-09-10 10:59:28,243 [ceph-deploy][INFO  ] Processing triggers for man-db ...
+2013-09-10 10:59:28,243 [ceph-deploy][INFO  ] Processing triggers for ureadahead ...
+2013-09-10 10:59:28,243 [ceph-deploy][INFO  ] Setting up libaio1 (0.3.109-2ubuntu1) ...
+2013-09-10 10:59:28,243 [ceph-deploy][INFO  ] Setting up libnspr4 (4.9.5-0ubuntu0.12.04.1) ...
+2013-09-10 10:59:28,243 [ceph-deploy][INFO  ] Setting up libnss3 (3.14.3-0ubuntu0.12.04.1) ...
+2013-09-10 10:59:28,244 [ceph-deploy][INFO  ] Setting up binutils (2.22-6ubuntu1.1) ...
+2013-09-10 10:59:28,244 [ceph-deploy][INFO  ] Setting up libboost-thread1.46.1 (1.46.1-7ubuntu3) ...
+2013-09-10 10:59:28,244 [ceph-deploy][INFO  ] Setting up librados2 (0.67.3-1precise) ...
+2013-09-10 10:59:28,244 [ceph-deploy][INFO  ] Setting up librbd1 (0.67.3-1precise) ...
+2013-09-10 10:59:28,245 [ceph-deploy][INFO  ] Setting up python-werkzeug (0.8.1+dfsg-1) ...
+2013-09-10 10:59:28,245 [ceph-deploy][INFO  ] Setting up python-markupsafe (0.15-1) ...
+2013-09-10 10:59:28,245 [ceph-deploy][INFO  ] Setting up python-jinja2 (2.6-1) ...
+2013-09-10 10:59:28,245 [ceph-deploy][INFO  ] Setting up python-flask (0.8-1) ...
+2013-09-10 10:59:28,245 [ceph-deploy][INFO  ] Setting up python-requests (0.8.2-1) ...
+2013-09-10 10:59:28,245 [ceph-deploy][INFO  ] Setting up python-ceph (0.67.3-1precise) ...
+2013-09-10 10:59:28,246 [ceph-deploy][INFO  ] Setting up ceph-common (0.67.3-1precise) ...
+2013-09-10 10:59:28,246 [ceph-deploy][INFO  ] Setting up libcryptsetup4 (2:1.4.1-2ubuntu4) ...
+2013-09-10 10:59:28,246 [ceph-deploy][INFO  ] Setting up cryptsetup-bin (2:1.4.1-2ubuntu4) ...
+2013-09-10 10:59:28,246 [ceph-deploy][INFO  ] Setting up libicu48 (4.8.1.1-3) ...
+2013-09-10 10:59:28,246 [ceph-deploy][INFO  ] Setting up gdisk (0.8.1-1build1) ...
+2013-09-10 10:59:28,247 [ceph-deploy][INFO  ] Setting up xfsprogs (3.1.7) ...
+2013-09-10 10:59:28,247 [ceph-deploy][INFO  ] Setting up libtcmalloc-minimal0 (1.7-1ubuntu1) ...
+2013-09-10 10:59:28,247 [ceph-deploy][INFO  ] Setting up libunwind7 (0.99-0.3ubuntu1) ...
+2013-09-10 10:59:28,247 [ceph-deploy][INFO  ] Setting up libgoogle-perftools0 (1.7-1ubuntu1) ...
+2013-09-10 10:59:28,248 [ceph-deploy][INFO  ] Setting up libsnappy1 (1.0.4-1build1) ...
+2013-09-10 10:59:28,248 [ceph-deploy][INFO  ] Setting up ceph (0.67.3-1precise) ...
+2013-09-10 10:59:28,248 [ceph-deploy][INFO  ] ceph-all start/running
+2013-09-10 10:59:28,248 [ceph-deploy][INFO  ] Setting up ceph-fs-common (0.67.3-1precise) ...
+2013-09-10 10:59:28,248 [ceph-deploy][INFO  ] Setting up ceph-mds (0.67.3-1precise) ...
+2013-09-10 10:59:28,249 [ceph-deploy][INFO  ] ceph-mds-all start/running
+2013-09-10 10:59:28,249 [ceph-deploy][INFO  ] Processing triggers for libc-bin ...
+2013-09-10 10:59:28,249 [ceph-deploy][INFO  ] ldconfig deferred processing now taking place
+2013-09-10 10:59:28,253 [ceph-deploy][INFO  ] Running command: ceph --version
+2013-09-10 10:59:28,324 [ceph-deploy][INFO  ] ceph version 0.67.3 (408cd61584c72c0d97b774b3d8f95c6b1b06341a)
