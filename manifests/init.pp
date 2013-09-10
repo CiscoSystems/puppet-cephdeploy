@@ -7,36 +7,35 @@ class cephdeploy(
     ensure => present,
   }
 
-  exec {'get ceph-deploy':
-    cwd     => '/etc/ceph/bootstrap',
-    command => '/usr/bin/pip install ceph-deploy',
+  package {'ceph-deploy':
+    ensure   => present,
+    provider => pip,
   }
-
-  file {'/etc/ceph/bootstrap':
+  
+  $cephdirs = ['/etc/ceph', '/etc/ceph/bootstrap']
+  file {$cephdirs:
     ensure => directory,
     owner  => 'root',
     mode   => '0755',
   }
 
   file { "ceph.conf":
-    path    => '/etc/ceph/bootstrap',
+    path    => '/etc/ceph/bootstrap/ceph.conf',
     content => template('cephdeploy/ceph.conf.erb'),
-    require => File['/etc/ceph/bootstrap'],
-    unless  => '/usr/bin/test -e /etc/ceph/bootstrap/ceph.conf',
+    require => File[$cephdirs],
   }
 
   file { "ceph.mon.keyring":
-    path    => '/etc/ceph/bootstrap',
+    path    => '/etc/ceph/bootstrap/ceph.mon.keyring',
     content => template('cephdeploy/ceph.mon.keyring.erb'),
     require => File['ceph.conf'],
-    unless  => '/usr/bin/test -e /etc/ceph/bootstrap/ceph.mon.keyring',
   }
 
   exec { "install ceph":
-    command => "/usr/local/bin/ceph-deploy install $::hostname",
     cwd     => '/etc/ceph/bootstrap',
-    unless  => '/usr/bin/dpkg -l | grep ceph',
-    require => [ Exec['get ceph-deploy'], File['ceph.mon.keyring'] ],
+    command => "/usr/local/bin/ceph-deploy install $::hostname",
+    unless  => '/usr/bin/dpkg -l | grep ceph-common',
+    require => [ Package['ceph-deploy'], File['ceph.mon.keyring'], File[$cephdirs] ],
   }
 
 
