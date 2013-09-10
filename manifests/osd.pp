@@ -10,7 +10,7 @@ define cephdeploy::osd(
   exec { "gatherkeys_$disk":
     cwd     => '/etc/ceph/bootstrap',
     user    => $user,
-    command => "/usr/local/bin/ceph-deploy gatherkeys $::mon_host",
+    command => "/usr/local/bin/ceph-deploy gatherkeys $::ceph_monitor_address",
     require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], File['/etc/ceph/bootstrap/ceph.log'] ],
     unless  => '/usr/bin/test -e /etc/ceph/bootstrap/ceph.bootstrap-osd.keyring',
   }
