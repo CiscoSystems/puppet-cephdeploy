@@ -1,8 +1,62 @@
 class cephdeploy(
   $user = $::ceph_deploy_user,
-  $pass = $::ceph_deploy_pass,
+  $pass = $::ceph_deploy_password,
 ){
+
+  # add a user with ssh keys for gatherkeys to work for osd creation
+  user {$user:
+    ensure => present,
+    password => $pass,
+    home     => "/home/$user",
+    shell    => '/bin/bash',
+  }
+
+  file {"/home/$user":
+    ensure => directory,
+    owner  => $user,
+    group  => $user,
+    mode   => 0755,
+  }
   
+  file {"/home/$user/.ssh":
+    ensure => directory,
+    owner  => $user,
+    group  => $user,
+    mode   => 0700,
+  }
+
+  file {"/home/$user/.ssh/id_rsa":
+    content => template('cephdeploy/id_rsa.erb'),
+    owner  => $user,
+    group  => $user,
+    mode   => 0600,
+  }
+
+  file {"/home/$user/.ssh/id_rsa.pub":
+    content => template('cephdeploy/id_rsa.pub.erb'),
+    owner  => $user,
+    group  => $user,
+    mode   => 0644,
+  }
+
+  file {"/home/$user/.ssh/authorized_keys":
+    content => template('cephdeploy/id_rsa.pub.erb'),
+    owner  => $user,
+    group  => $user,
+    mode   => 0600,
+  }
+
+  file {"/home/$user/.ssh/config":
+    content => template('cephdeploy/config.erb'),
+    owner  => $user,
+    group  => $user,
+    mode   => 0600,
+  }
+
+  exec {'passwordless sudo for ceph deploy user':
+    command => "/bin/echo \"$user ALL = (root) NOPASSWD:ALL\" | sudo tee /etc/sudoers.d/$user",
+  }
+
   package {'python-pip':
     ensure => present,
   }

@@ -4,15 +4,22 @@ class cephdeploy::osd(
 
   include cephdeploy
 
-  exec { 'zap disk':
-    command => "/usr/local/bin/ceph-deploy disk zap $::hostname:$disk",
+  exec { 'gatherkeys':
+    cwd => '/etc/ceph/bootstrap',
+    user => $::ceph_deploy_user,
+    command => "/usr/local/bin/ceph-deploy gatherkeys -h $::mon_host"
     require => Exec['install ceph'],
   }
 
-  exec { 'create osd':
-    command => "/usr/local/bin/ceph-deploy create osd $::hostname:$disk",
+  exec { 'zap disk':
     cwd     => '/etc/ceph/bootstrap',
-    unless  => '/bin/ps -ef | /bin/grep -v grep | /bin/grep ceph-mon',
+    command => "/usr/local/bin/ceph-deploy disk zap $::hostname:$disk",
+    require => [ Exec['install ceph'], Exec['gatherkeys'] ],
+  }
+
+  exec { 'create osd':
+    command => "/usr/local/bin/ceph-deploy osd create $::hostname:$disk",
+    cwd     => '/etc/ceph',
     require => Exec['zap disk'],
   }
 
