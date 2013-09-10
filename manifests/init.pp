@@ -7,7 +7,6 @@ class cephdeploy(
     ensure => present,
   }
 
-  # get latest ceph-deploy
   exec {'get ceph-deploy':
     cwd     => '/etc/ceph/bootstrap',
     command => '/usr/bin/pip install ceph-deploy',
