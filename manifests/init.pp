@@ -16,6 +16,7 @@ class cephdeploy(
     owner  => $user,
     group  => $user,
     mode   => 0755,
+    require => User[$user],
   }
   
   file {"/home/$user/.ssh":
@@ -23,6 +24,7 @@ class cephdeploy(
     owner  => $user,
     group  => $user,
     mode   => 0700,
+    require => File["/home/$user"],
   }
 
   file {"/home/$user/.ssh/id_rsa":
@@ -30,6 +32,7 @@ class cephdeploy(
     owner  => $user,
     group  => $user,
     mode   => 0600,
+    require => File["/home/$user/.ssh"],
   }
 
   file {"/home/$user/.ssh/id_rsa.pub":
@@ -37,6 +40,7 @@ class cephdeploy(
     owner  => $user,
     group  => $user,
     mode   => 0644,
+    require => File["/home/$user/.ssh"],
   }
 
   file {"/home/$user/.ssh/authorized_keys":
@@ -44,6 +48,7 @@ class cephdeploy(
     owner  => $user,
     group  => $user,
     mode   => 0600,
+    require => File["/home/$user/.ssh"],
   }
 
   file {"/home/$user/.ssh/config":
@@ -51,10 +56,20 @@ class cephdeploy(
     owner  => $user,
     group  => $user,
     mode   => 0600,
+    require => File["/home/$user/.ssh"],
+  }
+
+  file { "/home/$user/zapped":
+    ensure => directory,
   }
 
   exec {'passwordless sudo for ceph deploy user':
     command => "/bin/echo \"$user ALL = (root) NOPASSWD:ALL\" | sudo tee /etc/sudoers.d/$user",
+  }
+ 
+  file {"/etc/sudoers.d/$user":
+    mode    => 0440,
+    require => Exec['passwordless sudo for ceph deploy user'],
   }
 
   package {'python-pip':
@@ -70,7 +85,11 @@ class cephdeploy(
   file {$cephdirs:
     ensure => directory,
     owner  => 'root',
-    mode   => '0755',
+    mode   => '0777',
+  }
+
+  file {'/etc/ceph/bootstrap/ceph.log':
+    mode => 0777,
   }
 
   file { "ceph.conf":

@@ -1,27 +1,39 @@
-class cephdeploy::osd(
-  $disk,
+define cephdeploy::osd(
 ){
 
   include cephdeploy
+  $user = $::ceph_deploy_user
+  $disk = $name
 
-  exec { 'gatherkeys':
-    cwd => '/etc/ceph/bootstrap',
-    user => $::ceph_deploy_user,
-    command => "/usr/local/bin/ceph-deploy gatherkeys -h $::mon_host"
-    require => Exec['install ceph'],
+  notice($disk)
+
+  exec { "gatherkeys_$disk":
+    cwd     => '/etc/ceph/bootstrap',
+    user    => $user,
+    command => "/usr/local/bin/ceph-deploy gatherkeys $::mon_host",
+    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], File['/etc/ceph/bootstrap/ceph.log'] ],
+    unless  => '/usr/bin/test -e /etc/ceph/bootstrap/ceph.bootstrap-osd.keyring',
   }
 
-  exec { 'zap disk':
+  exec { "zap $disk":
     cwd     => '/etc/ceph/bootstrap',
     command => "/usr/local/bin/ceph-deploy disk zap $::hostname:$disk",
-    require => [ Exec['install ceph'], Exec['gatherkeys'] ],
+    require => [ Exec['install ceph'], Exec["gatherkeys_$disk"] ],
+    unless  => "/usr/bin/test -e /home/$user/zapped/$disk",
   }
 
-  exec { 'create osd':
+  exec { "create osd $disk":
+    cwd     => '/etc/ceph/bootstrap',
     command => "/usr/local/bin/ceph-deploy osd create $::hostname:$disk",
-    cwd     => '/etc/ceph',
-    require => Exec['zap disk'],
+    require => Exec["zap $disk"],
+    unless  => "/usr/bin/test -e /home/$user/zapped/$disk",
   }
+  
+  file { "/home/$user/zapped/$disk":
+    ensure  => present,
+    require => [ Exec["zap $disk"], Exec["create osd $disk"], File["/home/$user/zapped"] ],
+  }
+
 
 
 }
