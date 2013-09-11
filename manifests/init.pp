@@ -6,14 +6,6 @@ class cephdeploy(
 
   include pip
 
-  # cheesy hack so push autoadds host keys
-  # needed because ceph-deploy doesn't have any cool args to do this
-  exec { 'hack pushy':
-    command => "/bin/sed -i 's/missing_host_key_policy=\"reject\"/missing_host_key_policy=\"autoadd\"/g' /usr/local/lib/python2.7/dist-packages/pushy/transport/ssh.py",
-    unless  => '/bin/grep "missing_host_key_policy=\"autoadd\"" /usr/local/lib/python2.7/dist-packages/pushy/transport/ssh.py',
-  }
-
-  # add a user with ssh keys for gatherkeys to work for osd creation
   user {$user:
     ensure => present,
     password => $pass,

@@ -7,7 +7,7 @@ define cephdeploy::osd(
 
   $mon0 = "`/bin/grep \"mon initial members\" /etc/ceph/ceph.conf  | /usr/bin/awk '{print \$5}' | /bin/sed '\$s/.$//'`"
 
-  exec {'copy ceph.conf':
+  exec {"copy ceph.conf $disk":
     command => '/bin/cp /etc/ceph/bootstrap/ceph.conf /etc/ceph/ceph.conf',
     unless  => '/usr/bin/test -e /etc/ceph/ceph.conf',
     require => File['ceph.conf'],
@@ -18,11 +18,11 @@ define cephdeploy::osd(
     user    => $user,
     provider => shell,
     command => "/bin/rm -f /etc/ceph/bootstrap/ceph.log && /usr/local/bin/ceph-deploy gatherkeys $mon0",
-    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], File['/etc/ceph/bootstrap/ceph.log'], Exec['hack pushy'], Exec['copy ceph.conf']  ],
+    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], File['/etc/ceph/bootstrap/ceph.log'], Exec["copy ceph.conf $disk"]  ],
     unless  => '/usr/bin/test -e /etc/ceph/bootstrap/ceph.bootstrap-osd.keyring',
   }
 
-  exec {'copy admin key':
+  exec {"copy admin key $disk":
     command => '/bin/cp /etc/ceph/bootstrap/ceph.client.admin.keyring /etc/ceph/',
     unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
     require => Exec["gatherkeys_$disk"],
