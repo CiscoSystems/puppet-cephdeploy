@@ -63,6 +63,10 @@ define cephdeploy::osd(
     require => [ Exec["zap $disk"], Exec["create osd $disk"], File["/home/$user/zapped"] ],
   }
 
+  exec {'iptables osd':
+    command => "/sbin/iptables -A INPUT -i $::ceph_cluster_interface  -m multiport -p tcp -s $::ceph_cluster_network --dports 6800:6810 -j ACCEPT",
+  }
+
   if $setup_pools {
 
     exec { "create glance images pool $disk":
