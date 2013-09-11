@@ -67,6 +67,7 @@ class cephdeploy(
 
   exec {'passwordless sudo for ceph deploy user':
     command => "/bin/echo \"$user ALL = (root) NOPASSWD:ALL\" | sudo tee /etc/sudoers.d/$user",
+    unless  => "/usr/bin/test -e /etc/sudoers.d/$user",
   }
  
   file {"/etc/sudoers.d/$user":
@@ -80,34 +81,33 @@ class cephdeploy(
     unless  => '/usr/bin/pip install ceph-deploy | /bin/grep satisfied',
   }
 
-  $cephdirs = ['/etc/ceph', '/etc/ceph/bootstrap']
-  file {$cephdirs:
+  file {"/home/$user/bootstrap":
     ensure => directory,
-    owner  => 'root',
-    mode   => '0777',
-  }
-
-  file {'/etc/ceph/bootstrap/ceph.log':
-    mode => 0777,
+    owner  => $user,
+    group  => $user,
   }
 
   file { "ceph.conf":
-    path    => '/etc/ceph/bootstrap/ceph.conf',
+    owner   => $user,
+    group   => $user,
+    path    => "/home/$user/bootstrap/ceph.conf",
     content => template('cephdeploy/ceph.conf.erb'),
-    require => File[$cephdirs],
+    require => File["/home/$user/bootstrap"],
   }
 
   file { "ceph.mon.keyring":
-    path    => '/etc/ceph/bootstrap/ceph.mon.keyring',
+    owner   => $user,
+    group   => $user,
+    path    => "/home/$user/bootstrap/ceph.mon.keyring",
     content => template('cephdeploy/ceph.mon.keyring.erb'),
     require => File['ceph.conf'],
   }
 
   exec { "install ceph":
-    cwd     => '/etc/ceph/bootstrap',
+    cwd     => "/home/$user/bootstrap",
     command => "/usr/local/bin/ceph-deploy install $::hostname",
     unless  => '/usr/bin/dpkg -l | grep ceph-common',
-    require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File[$cephdirs] ],
+    require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"] ],
   }
 
   if $has_compute {
