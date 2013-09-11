@@ -41,7 +41,7 @@ class cephdeploy::baseconfig(
     owner  => $user,
     group  => $user,
     mode   => 0644,
-    require => File["/home/$user/.ssh"],
+    require => File["/home/$user/.ssh/id_rsa"],
   }
 
   file {"/home/$user/.ssh/authorized_keys":
@@ -49,7 +49,7 @@ class cephdeploy::baseconfig(
     owner  => $user,
     group  => $user,
     mode   => 0600,
-    require => File["/home/$user/.ssh"],
+    require => File["/home/$user/.ssh/id_rsa.pub"],
   }
 
   file {"/home/$user/.ssh/config":
@@ -57,12 +57,13 @@ class cephdeploy::baseconfig(
     owner  => $user,
     group  => $user,
     mode   => 0600,
-    require => File["/home/$user/.ssh"],
+    require => File["/home/$user/.ssh/authorized_keys"],
   }
 
   exec {'passwordless sudo for ceph deploy user':
     command => "/bin/echo \"$user ALL = (root) NOPASSWD:ALL\" | sudo tee /etc/sudoers.d/$user",
     unless  => "/usr/bin/test -e /etc/sudoers.d/$user",
+    require => File["/home/$user/.ssh/config"],
   }
  
   file {"/etc/sudoers.d/$user":
@@ -75,19 +76,20 @@ class cephdeploy::baseconfig(
     group => $user,
     mode  => 0777,
     path  => "/home/$user/bootstrap/ceph.log",
-    require => Exec["install ceph"],
+    require => [ Exec["install ceph"], file["/etc/sudoers.d/$user"], ],
   }
 
   exec {'install ceph-deploy':
     command => '/usr/bin/pip install ceph-deploy', 
-    require => Package['python-pip'],
     unless  => '/usr/bin/pip install ceph-deploy | /bin/grep satisfied',
+    require => Package['python-pip']
   }
 
   file {"/home/$user/bootstrap":
     ensure => directory,
     owner  => $user,
     group  => $user,
+    require => file["/etc/sudoers.d/$user"],
   }
 
   file { "ceph.conf":
@@ -110,16 +112,15 @@ class cephdeploy::baseconfig(
     cwd     => "/home/$user/bootstrap",
     command => "/usr/local/bin/ceph-deploy install $::hostname",
     unless  => '/usr/bin/dpkg -l | grep ceph-common',
-    require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"] ],
+    require => file["ceph.mon.keyring"],
   }
 
   exec {'gatherkeys':
     cwd     => "/home/$user/bootstrap",
     command => "/usr/local/bin/ceph-deploy gatherkeys $::ceph_primary_mon",
     unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
-    require => [ Exec["install ceph"], exec['install ceph-deploy'] ],
-    provider => shell,
     user     => $user,
+    require => exec['install ceph'],
   }
 
   exec {'copy key':
