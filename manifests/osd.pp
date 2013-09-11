@@ -5,25 +5,33 @@ define cephdeploy::osd(
   $user = $::ceph_deploy_user
   $disk = $name
 
-#  exec {"copy ceph.conf $disk":
-#    command => '/bin/cp /etc/ceph/bootstrap/ceph.conf /etc/ceph/ceph.conf',
-#    unless  => '/usr/bin/test -e /etc/ceph/ceph.conf',
-#    require => File['ceph.conf'],
-#  }
+  file {"log $disk":
+    owner => $user,
+    group => $user,
+    path  => "/home/$user/bootstrap/ceph.log",
+  }
 
+  exec { "get config $disk":
+    cwd     => "/home/$user/bootstrap",
+    user    => $user,
+    command => "/usr/local/bin/ceph-deploy config push $::hostname",
+    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], File["log $disk"] ],
+    unless  => "/usr/bin/test -e /etc/ceph/ceph.conf",
+  }
+    
   exec { "gatherkeys_$disk":
     cwd     => "/home/$user/bootstrap",
     user    => $user,
     command => "/usr/local/bin/ceph-deploy gatherkeys $::ceph_primary_mon",
-    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], ],
+    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], File["log $disk"] ],
     unless  => "/usr/bin/test -e /home/$user/bootstrap/ceph.bootstrap-osd.keyring",
   }
 
-#  exec {"copy admin key $disk":
-#    command => '/bin/cp /etc/ceph/bootstrap/ceph.client.admin.keyring /etc/ceph/',
-#    unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
-#    require => Exec["gatherkeys_$disk"],
-#  }
+  exec {"copy admin key $disk":
+    command => "/bin/cp /home/$user/bootstrap/ceph.client.admin.keyring /etc/ceph",
+    unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
+    require => Exec["gatherkeys_$disk"],
+  }
 
   exec { "zap $disk":
     cwd     => "/home/$user/bootstrap",
