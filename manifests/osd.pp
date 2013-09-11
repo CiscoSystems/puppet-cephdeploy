@@ -1,9 +1,18 @@
 define cephdeploy::osd(
+  $setup_pools = false,
 ){
 
   include cephdeploy
   $user = $::ceph_deploy_user
   $disk = $name
+
+#  package { 'python-ceph':
+#    ensure => present,
+#  }
+ 
+  package { 'sysfsutils':
+    ensure => present,
+  }
 
   file {"log $disk":
     owner => $user,
@@ -53,6 +62,25 @@ define cephdeploy::osd(
     ensure  => present,
     require => [ Exec["zap $disk"], Exec["create osd $disk"], File["/home/$user/zapped"] ],
   }
+
+  if $setup_pools {
+
+    exec { "create glance images pool $disk":
+      command => "/usr/bin/ceph osd pool create ${::glance_ceph_pool} 128",
+      unless => "/usr/bin/rados lspools | grep -sq ${::glance_ceph_pool}",
+      require => Exec["create osd $disk"],
+      notify => [ Service['glance-api'], Service['glance-registry'] ],
+    }
+
+    exec { "create cinder volumes pool $disk":
+      command => "/usr/bin/ceph osd pool create $::cinder_rbd_pool} 128",
+      unless => "/usr/bin/rados lspools | grep -sq $::cinder_rbd_pool}",
+      require => Exec["create osd $disk"],
+      notify => [ Service['cinder-volume'], Service['glance-registry'] ],
+    }
+
+  }
+
 
 
 
