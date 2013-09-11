@@ -5,13 +5,14 @@ define cephdeploy::osd(
   $user = $::ceph_deploy_user
   $disk = $name
 
-  notice($disk)
+  $mon0 = "`/bin/grep mon_initial_members /etc/ceph/ceph.conf  | /usr/bin/awk '{print \$3}' | /bin/sed '\$s/.$//'`"
 
   exec { "gatherkeys_$disk":
     cwd     => '/etc/ceph/bootstrap',
     user    => $user,
-    command => "/bin/rm -f /etc/ceph/bootstrap/ceph.log && /usr/local/bin/ceph-deploy gatherkeys $::mon_initial_members",
-    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], File['/etc/ceph/bootstrap/ceph.log'] ],
+    provider => shell,
+    command => "/bin/rm -f /etc/ceph/bootstrap/ceph.log && /usr/local/bin/ceph-deploy gatherkeys $mon0",
+    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], File['/etc/ceph/bootstrap/ceph.log'], Exec['hack pushy'] ],
     unless  => '/usr/bin/test -e /etc/ceph/bootstrap/ceph.bootstrap-osd.keyring',
   }
 

@@ -1,3 +1,4 @@
-Host <%= @mon_initial_members %>
-        Hostname <%= @ceph_monitor_address %>
-        User <%= @ceph_deploy_user %>
+User <%= @ceph_deploy_user %>
+StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
+PubkeyAuthentication yes
