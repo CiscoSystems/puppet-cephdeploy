@@ -22,6 +22,12 @@ define cephdeploy::osd(
     unless  => '/usr/bin/test -e /etc/ceph/bootstrap/ceph.bootstrap-osd.keyring',
   }
 
+  exec {'copy admin key':
+    command => '/bin/cp /etc/ceph/bootstrap/ceph.client.admin.keyring /etc/ceph/',
+    unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
+    require => Exec["gatherkeys_$disk"],
+  }
+
   exec { "zap $disk":
     cwd     => '/etc/ceph/bootstrap',
     command => "/usr/local/bin/ceph-deploy disk zap $::hostname:$disk",

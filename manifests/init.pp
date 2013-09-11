@@ -1,6 +1,7 @@
 class cephdeploy(
   $user = $::ceph_deploy_user,
   $pass = $::ceph_deploy_password,
+  $has_compute = false,
 ){
 
   # cheesy hack so push autoadds host keys
@@ -116,6 +117,29 @@ class cephdeploy(
     command => "/usr/local/bin/ceph-deploy install $::hostname",
     unless  => '/usr/bin/dpkg -l | grep ceph-common',
     require => [ Package['ceph-deploy'], File['ceph.mon.keyring'], File[$cephdirs] ],
+  }
+
+  if $has_compute {
+
+    package {'libvirt-bin':
+      ensure => present,
+    }
+
+    file { '/etc/ceph/secret.xml':
+      content => template('cephdeploy/secret.xml-compute.erb'),
+    }
+
+    exec { 'get-or-set virsh secret':
+      command => '/usr/bin/virsh secret-define --file /etc/ceph/secret.xml | /usr/bin/awk \'{print $2}\' | sed \'/^$/d\' > /etc/ceph/virsh.secret',
+      creates => "/etc/ceph/virsh.secret",
+      require => [ File['ceph.conf'], Package['libvirt-bin'] ],
+    }
+
+    exec { 'set-secret-value virsh':
+      command => "/usr/bin/virsh secret-set-value --secret $(cat /etc/ceph/virsh.secret) --base64 $(ceph auth get-key client.admin)",
+      require => [ Exec['get-or-set virsh secret'], Exec['install ceph'] ],
+    }
+
   }
 
 
