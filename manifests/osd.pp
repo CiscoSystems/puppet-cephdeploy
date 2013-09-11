@@ -1,9 +1,20 @@
 define cephdeploy::osd(
+  $setup_pools = false,
 ){
 
   include cephdeploy
   $user = $::ceph_deploy_user
   $disk = $name
+
+#  file {'service perms':
+#    mode => 0644,
+#    path => '/etc/ceph/ceph.client.admin.keyring',
+#    require => exec['copy key'],
+#  }
+
+  package { 'sysfsutils':
+    ensure => present,
+  }
 
   file {"log $disk":
     owner => $user,
@@ -53,6 +64,29 @@ define cephdeploy::osd(
     ensure  => present,
     require => [ Exec["zap $disk"], Exec["create osd $disk"], File["/home/$user/zapped"] ],
   }
+
+  exec {'iptables osd':
+    command => "/sbin/iptables -A INPUT -i $::ceph_cluster_interface  -m multiport -p tcp -s $::ceph_cluster_network --dports 6800:6810 -j ACCEPT",
+    unless  => '/sbin/iptables -L | grep "multiport dports 6800:6810"',
+  }
+
+  if $setup_pools {
+
+    exec { "create glance images pool $disk":
+      command => "/usr/bin/ceph osd pool create ${::glance_ceph_pool} 128",
+      unless => "/usr/bin/rados lspools | grep -sq $::glance_ceph_pool",
+      require => Exec["create osd $disk"],
+    }
+
+    exec { "create cinder volumes pool $disk":
+      command => "/usr/bin/ceph osd pool create $::cinder_rbd_pool 128",
+      unless => "/usr/bin/rados lspools | grep -sq $::cinder_rbd_pool",
+      require => Exec["create osd $disk"],
+      notify => [ Service['cinder-volume'], Service['nova-compute'] ],
+    }
+
+  }
+
 
 
 

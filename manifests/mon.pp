@@ -12,5 +12,10 @@ class cephdeploy::mon(
     provider => shell,
   }
 
+  exec {'iptables mon':
+    command => "/sbin/iptables -A INPUT -i $::ceph_public_interface -p tcp -s $::ceph_public_network --dport 6789 -j ACCEPT",
+    unless  => '/sbin/iptables -L | grep "tcp dpt:6789"',
+  }
+
 
 }
