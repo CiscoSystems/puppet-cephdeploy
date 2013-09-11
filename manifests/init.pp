@@ -4,6 +4,8 @@ class cephdeploy(
   $has_compute = false,
 ){
 
+  include pip
+
   # cheesy hack so push autoadds host keys
   # needed because ceph-deploy doesn't have any cool args to do this
   exec { 'hack pushy':
@@ -80,13 +82,10 @@ class cephdeploy(
     require => Exec['passwordless sudo for ceph deploy user'],
   }
 
-#  package {'python-pip':
-#    ensure => present,
-#  }
-
-  package {'ceph-deploy':
-    ensure   => present,
-    provider => pip,
+  exec {'install ceph-deploy':
+    command => '/usr/bin/pip install ceph-deploy', 
+    require => Package['python-pip'],
+    unless  => '/usr/bin/pip install ceph-deploy | /bin/grep satisfied',
   }
 
   $cephdirs = ['/etc/ceph', '/etc/ceph/bootstrap']
@@ -116,7 +115,7 @@ class cephdeploy(
     cwd     => '/etc/ceph/bootstrap',
     command => "/usr/local/bin/ceph-deploy install $::hostname",
     unless  => '/usr/bin/dpkg -l | grep ceph-common',
-    require => [ Package['ceph-deploy'], File['ceph.mon.keyring'], File[$cephdirs] ],
+    require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File[$cephdirs] ],
   }
 
   if $has_compute {

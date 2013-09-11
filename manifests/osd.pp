@@ -37,7 +37,7 @@ define cephdeploy::osd(
 
   exec { "create osd $disk":
     cwd     => '/etc/ceph/bootstrap',
-    command => "/usr/local/bin/ceph-deploy osd create $::hostname:$disk",
+    command => "/usr/local/bin/ceph-deploy --overwrite-conf osd create $::hostname:$disk",
     require => Exec["zap $disk"],
     unless  => "/usr/bin/test -e /home/$user/zapped/$disk",
   }
