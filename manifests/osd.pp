@@ -8,7 +8,9 @@ define cephdeploy::osd(
   file {"log $disk":
     owner => $user,
     group => $user,
+    mode  => 0777,
     path  => "/home/$user/bootstrap/ceph.log",
+    require => Exec["install ceph"],
   }
 
   exec { "get config $disk":
@@ -23,7 +25,7 @@ define cephdeploy::osd(
     cwd     => "/home/$user/bootstrap",
     user    => $user,
     command => "/usr/local/bin/ceph-deploy gatherkeys $::ceph_primary_mon",
-    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], File["log $disk"] ],
+    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], Exec["get config $disk"] ],
     unless  => "/usr/bin/test -e /home/$user/bootstrap/ceph.bootstrap-osd.keyring",
   }
 
