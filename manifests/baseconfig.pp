@@ -1,7 +1,6 @@
-class cephdeploy(
+class cephdeploy::baseconfig(
   $user = $::ceph_deploy_user,
   $pass = $::ceph_deploy_password,
-  $has_compute = false,
 ){
 
   include pip
@@ -42,7 +41,7 @@ class cephdeploy(
     owner  => $user,
     group  => $user,
     mode   => 0644,
-    require => File["/home/$user/.ssh"],
+    require => File["/home/$user/.ssh/id_rsa"],
   }
 
   file {"/home/$user/.ssh/authorized_keys":
@@ -50,7 +49,7 @@ class cephdeploy(
     owner  => $user,
     group  => $user,
     mode   => 0600,
-    require => File["/home/$user/.ssh"],
+    require => File["/home/$user/.ssh/id_rsa.pub"],
   }
 
   file {"/home/$user/.ssh/config":
@@ -58,16 +57,13 @@ class cephdeploy(
     owner  => $user,
     group  => $user,
     mode   => 0600,
-    require => File["/home/$user/.ssh"],
-  }
-
-  file { "/home/$user/zapped":
-    ensure => directory,
+    require => File["/home/$user/.ssh/authorized_keys"],
   }
 
   exec {'passwordless sudo for ceph deploy user':
     command => "/bin/echo \"$user ALL = (root) NOPASSWD:ALL\" | sudo tee /etc/sudoers.d/$user",
     unless  => "/usr/bin/test -e /etc/sudoers.d/$user",
+    require => File["/home/$user/.ssh/config"],
   }
  
   file {"/etc/sudoers.d/$user":
@@ -75,16 +71,25 @@ class cephdeploy(
     require => Exec['passwordless sudo for ceph deploy user'],
   }
 
+  file {"log $disk":
+    owner => $user,
+    group => $user,
+    mode  => 0777,
+    path  => "/home/$user/bootstrap/ceph.log",
+    require => [ Exec["install ceph"], file["/etc/sudoers.d/$user"], ],
+  }
+
   exec {'install ceph-deploy':
     command => '/usr/bin/pip install ceph-deploy', 
-    require => Package['python-pip'],
     unless  => '/usr/bin/pip install ceph-deploy | /bin/grep satisfied',
+    require => Package['python-pip']
   }
 
   file {"/home/$user/bootstrap":
     ensure => directory,
     owner  => $user,
     group  => $user,
+    require => file["/etc/sudoers.d/$user"],
   }
 
   file { "ceph.conf":
@@ -102,38 +107,38 @@ class cephdeploy(
     content => template('cephdeploy/ceph.mon.keyring.erb'),
     require => File['ceph.conf'],
   }
- 
+
   exec { "install ceph":
     cwd     => "/home/$user/bootstrap",
     command => "/usr/local/bin/ceph-deploy install $::hostname",
     unless  => '/usr/bin/dpkg -l | grep ceph-common',
-    require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"] ],
+    require => file["ceph.mon.keyring"],
+  }
+
+  exec {'gatherkeys':
+    cwd     => "/home/$user/bootstrap",
+    command => "/usr/local/bin/ceph-deploy gatherkeys $::ceph_primary_mon",
+    unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
+    user     => $user,
+    require => exec['install ceph'],
+  }
+
+  exec {'copy key':
+    command => "/bin/cp /home/$user/bootstrap/ceph.client.admin.keyring /etc/ceph",
+    unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
+    require => exec['gatherkeys'],
+  }
+  
+  exec {'copy ceph.conf':
+    command => "/bin/cp /home/$user/bootstrap/ceph.conf /etc/ceph",
+    unless  => '/usr/bin/test -e /etc/ceph/ceph.conf',
+    require => exec['gatherkeys'],
   }
 
   file {'service perms':
     mode => 0644,
     path => '/etc/ceph/ceph.client.admin.keyring',
-    require => exec['install ceph'],
-  }
-
-  if $has_compute {
-
-    file { '/etc/ceph/secret.xml':
-      content => template('cephdeploy/secret.xml-compute.erb'),
-      require => Exec["install ceph"],
-    }
-
-    exec { 'get-or-set virsh secret':
-      command => '/usr/bin/virsh secret-define --file /etc/ceph/secret.xml | /usr/bin/awk \'{print $2}\' | sed \'/^$/d\' > /etc/ceph/virsh.secret',
-      creates => "/etc/ceph/virsh.secret",
-      require => [ File['ceph.conf'], Package['libvirt-bin'], File['/etc/ceph/secret.xml'] ],
-    }
-
-    exec { 'set-secret-value virsh':
-      command => "/usr/bin/virsh secret-set-value --secret $(cat /etc/ceph/virsh.secret) --base64 $(ceph auth get-key client.admin)",
-      require => [ Exec['get-or-set virsh secret'], Exec['install ceph'] ],
-    }
-
+    require => exec['copy key'],
   }
 
 
