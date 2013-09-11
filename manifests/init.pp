@@ -112,10 +112,6 @@ class cephdeploy(
 
   if $has_compute {
 
-    #package {'libvirt-bin':
-    #  ensure => present,
-    #}
-
     file { '/etc/ceph/secret.xml':
       content => template('cephdeploy/secret.xml-compute.erb'),
       require => Exec["install ceph"],

@@ -6,10 +6,6 @@ define cephdeploy::osd(
   $user = $::ceph_deploy_user
   $disk = $name
 
-#  package { 'python-ceph':
-#    ensure => present,
-#  }
- 
   package { 'sysfsutils':
     ensure => present,
   }
@@ -73,7 +69,6 @@ define cephdeploy::osd(
       command => "/usr/bin/ceph osd pool create ${::glance_ceph_pool} 128",
       unless => "/usr/bin/rados lspools | grep -sq $::glance_ceph_pool",
       require => Exec["create osd $disk"],
-      #notify => [ Service['glance-api'], Service['glance-registry'] ],
     }
 
     exec { "create cinder volumes pool $disk":
