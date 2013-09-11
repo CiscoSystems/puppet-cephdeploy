@@ -67,16 +67,16 @@ define cephdeploy::osd(
 
     exec { "create glance images pool $disk":
       command => "/usr/bin/ceph osd pool create ${::glance_ceph_pool} 128",
-      unless => "/usr/bin/rados lspools | grep -sq ${::glance_ceph_pool}",
+      unless => "/usr/bin/rados lspools | grep -sq $::glance_ceph_pool",
       require => Exec["create osd $disk"],
-      notify => [ Service['glance-api'], Service['glance-registry'] ],
+      #notify => [ Service['glance-api'], Service['glance-registry'] ],
     }
 
     exec { "create cinder volumes pool $disk":
-      command => "/usr/bin/ceph osd pool create $::cinder_rbd_pool} 128",
-      unless => "/usr/bin/rados lspools | grep -sq $::cinder_rbd_pool}",
+      command => "/usr/bin/ceph osd pool create $::cinder_rbd_pool 128",
+      unless => "/usr/bin/rados lspools | grep -sq $::cinder_rbd_pool",
       require => Exec["create osd $disk"],
-      notify => [ Service['cinder-volume'], Service['glance-registry'] ],
+      notify => [ Service['cinder-volume'], Service['nova-compute'] ],
     }
 
   }

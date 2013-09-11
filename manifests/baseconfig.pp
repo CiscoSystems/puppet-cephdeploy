@@ -1,7 +1,6 @@
-class cephdeploy(
+class cephdeploy::baseconfig(
   $user = $::ceph_deploy_user,
   $pass = $::ceph_deploy_password,
-  $has_compute = false,
 ){
 
   include pip
@@ -61,10 +60,6 @@ class cephdeploy(
     require => File["/home/$user/.ssh"],
   }
 
-  file { "/home/$user/zapped":
-    ensure => directory,
-  }
-
   exec {'passwordless sudo for ceph deploy user':
     command => "/bin/echo \"$user ALL = (root) NOPASSWD:ALL\" | sudo tee /etc/sudoers.d/$user",
     unless  => "/usr/bin/test -e /etc/sudoers.d/$user",
@@ -73,6 +68,14 @@ class cephdeploy(
   file {"/etc/sudoers.d/$user":
     mode    => 0440,
     require => Exec['passwordless sudo for ceph deploy user'],
+  }
+
+  file {"log $disk":
+    owner => $user,
+    group => $user,
+    mode  => 0777,
+    path  => "/home/$user/bootstrap/ceph.log",
+    require => Exec["install ceph"],
   }
 
   exec {'install ceph-deploy':
@@ -110,28 +113,31 @@ class cephdeploy(
     require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"] ],
   }
 
-  if $has_compute {
+  exec {'gatherkeys':
+    cwd     => "/home/$user/bootstrap",
+    command => "/usr/local/bin/ceph-deploy gatherkeys $::ceph_primary_mon",
+    unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
+    require => [ Exec["install ceph"], exec['install ceph-deploy'] ],
+    provider => shell,
+    user     => $user,
+  }
 
-    #package {'libvirt-bin':
-    #  ensure => present,
-    #}
+  exec {'copy key':
+    command => "/bin/cp /home/$user/bootstrap/ceph.client.admin.keyring /etc/ceph",
+    unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
+    require => exec['gatherkeys'],
+  }
+  
+  exec {'copy ceph.conf':
+    command => "/bin/cp /home/$user/bootstrap/ceph.conf /etc/ceph",
+    unless  => '/usr/bin/test -e /etc/ceph/ceph.conf',
+    require => exec['gatherkeys'],
+  }
 
-    file { '/etc/ceph/secret.xml':
-      content => template('cephdeploy/secret.xml-compute.erb'),
-      require => Exec["install ceph"],
-    }
-
-    exec { 'get-or-set virsh secret':
-      command => '/usr/bin/virsh secret-define --file /etc/ceph/secret.xml | /usr/bin/awk \'{print $2}\' | sed \'/^$/d\' > /etc/ceph/virsh.secret',
-      creates => "/etc/ceph/virsh.secret",
-      require => [ File['ceph.conf'], Package['libvirt-bin'], File['/etc/ceph/secret.xml'] ],
-    }
-
-    exec { 'set-secret-value virsh':
-      command => "/usr/bin/virsh secret-set-value --secret $(cat /etc/ceph/virsh.secret) --base64 $(ceph auth get-key client.admin)",
-      require => [ Exec['get-or-set virsh secret'], Exec['install ceph'] ],
-    }
-
+  file {'service perms':
+    mode => 0644,
+    path => '/etc/ceph/ceph.client.admin.keyring',
+    require => exec['copy key'],
   }
 
 
