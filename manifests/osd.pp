@@ -6,6 +6,12 @@ define cephdeploy::osd(
   $user = $::ceph_deploy_user
   $disk = $name
 
+#  file {'service perms':
+#    mode => 0644,
+#    path => '/etc/ceph/ceph.client.admin.keyring',
+#    require => exec['copy key'],
+#  }
+
   package { 'sysfsutils':
     ensure => present,
   }
@@ -61,6 +67,7 @@ define cephdeploy::osd(
 
   exec {'iptables osd':
     command => "/sbin/iptables -A INPUT -i $::ceph_cluster_interface  -m multiport -p tcp -s $::ceph_cluster_network --dports 6800:6810 -j ACCEPT",
+    unless  => '/sbin/iptables -L | grep "multiport dports 6800:6810"',
   }
 
   if $setup_pools {

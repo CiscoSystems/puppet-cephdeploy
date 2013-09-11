@@ -102,12 +102,18 @@ class cephdeploy(
     content => template('cephdeploy/ceph.mon.keyring.erb'),
     require => File['ceph.conf'],
   }
-
+ 
   exec { "install ceph":
     cwd     => "/home/$user/bootstrap",
     command => "/usr/local/bin/ceph-deploy install $::hostname",
     unless  => '/usr/bin/dpkg -l | grep ceph-common',
     require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"] ],
+  }
+
+  file {'service perms':
+    mode => 0644,
+    path => '/etc/ceph/ceph.client.admin.keyring',
+    require => exec['install ceph'],
   }
 
   if $has_compute {
