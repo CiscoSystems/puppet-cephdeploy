@@ -31,8 +31,7 @@ $cinder_rbd_pool        = 'volumes'
 $cinder_rbd_secret_uuid = 'e80afa94-a64c-486c-9e34-d55e85f26406'
 $mon_initial_members    = 'control-server'
 $ceph_primary_mon       = 'control-server'
-## yes leave the trailing comma intact for now
-$ceph_monitor_address   = '10.0.0.1,'
+$ceph_monitor_address   = '10.0.0.1,' yes leave the trailing comma intact for now
 $ceph_deploy_user       = 'k9de9kdkasdok'
 $ceph_deploy_password   = 'dsaadsadasdk09as09kdsad'
 $ceph_cluster_interface = 'eth1'
