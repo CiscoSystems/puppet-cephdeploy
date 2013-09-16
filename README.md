@@ -1,9 +1,15 @@
 Automating ceph-deploy
 ======================
 
-This puppet module allows you to fully automate the deployment of a ceph cluster. The need for this sort of functionality came about with the goal of full bottom-up automation of an OpenStack cloud that is ceph-backed. If you wish to try this automation, check out Cisco OpenStack Installer CiscoSystems/grizzly-manifests
+This puppet module allows you to fully automate the deployment of a ceph cluster. The need for this sort of functionality came about with the goal of full bottom-up automation of an OpenStack cloud that is ceph-backed.
 
 This module will also configure OpenStack cinder and nova-compute nodes to use the ceph cluster.
+
+*This automation will be implemented in the Havana release of[Cisco OpenStack Installer](http://docwiki.cisco.com/wiki/OpenStack:Grizzly-Multinode)*
+
+Questions? Comments?
+Donald Talton
+dotalton@cisco.com
 
 
 site.pp variables
@@ -30,18 +36,24 @@ Installation on your nodes
 
 This is the base class that installs ceph and configures the requirements on the system. If you are using this on a nova-compute node, you must pass "has_compute".
 
+
+Install
+-------
     class {'cephdeploy': }
 
     #on a compute node
     class {'cephdeploy': has_compute => true, }
 
 
-Use this class where you want to deploy a mon service.
+Create a MON
+------------
 
     {'cephdeploy::mon': }
 
 
-To create an OSD. Multiple disks call for multiple declaration.
+Create an OSD 
+-------------
+Multiple disks call for multiple declaration.
 
     cephdeploy::osd { 'sdb': }
     cephdeploy::osd { 'sdc': }
@@ -50,19 +62,15 @@ When creating you first osd node, you will want to pass "setup_pools", this will
 
     cephdeploy::osd { 'sdb': setup_pools => true, }
 
-To create an MDS:
 
+Create an MDS
+-------------
     class {'cephdeploy::mds': }
 
 
-The basic class 
----------------
+Create a client-only node
+-------------------------
+
 The point of this class is to install ceph and its keys. This class should only be called on a node that is not running, or going to ever run, any additional ceph services. For example, this is what you want to use on a controller that has no mon.
 
     class {'cephdeploy::baseconfig': }
-
-
-
-
-Donald Talton
-dotalton@cisco.com
