@@ -5,10 +5,10 @@ This puppet module allows you to fully automate the deployment of a ceph cluster
 
 This module will also configure OpenStack cinder and nova-compute nodes to use the ceph cluster.
 
-*This automation will be implemented in the Havana release of[Cisco OpenStack Installer](http://docwiki.cisco.com/wiki/OpenStack:Grizzly-Multinode)*
+*This automation will be implemented in the Havana release of [Cisco OpenStack Installer](http://docwiki.cisco.com/wiki/OpenStack:Grizzly-Multinode)*
 
-Questions? Comments?
-Donald Talton
+Questions? Comments?  
+Donald Talton  
 dotalton@cisco.com
 
 
