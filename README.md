@@ -1,31 +1,28 @@
-automating ceph-deploy
+Automating ceph-deploy
+================================
 
-This is a completely new module and has no relation to puppet-ceph. There are a lot of changes between this module and puppet-ceph, the primary being the use of ceph-deploy rather than utilizing the manual ceph installation process. To use the module, there are now only a few class calls that have to be made. Store configs is no longer needed. Only one pass is needed on each respective node for the cluster to completely come up and be online. This includes osd nodes with multiple disks. This results in a great increase in deployment speed. All services can now co-habitate without issue (osd+mon+mds, or any combination thereof).
+This puppet module allows you to fully automate the deployment of a ceph cluster. The need for this sort of functionality came about with the goal of full bottom-up automation of an OpenStack cloud that is ceph-backed. If you wish to try this automation, check out Cisco OpenStack Installer CiscoSystems/grizzly-manifests
 
-Under this new model, you can add services as needed and just run the puppet agent for configuration. To add a new service, just use the respective class call(s) which are listed below. You cannot remove services in this fashion. Mons can be removed with ceph-deploy, but as of this email osds cannot. It's a feature in the works.
 
-To take it for a test drive, on your build server:
+Create/modify your site.pp, you will need to add the following information:
 
-git clone https://github.com/dontalton/puppet-cephdeploy /usr/share/puppet/modules/cephdeploy
+    $ceph_monitor_fsid = 'e80afa94-a64c-486c-9e34-d55e85f26406'
+    $ceph_monitor_secret = 'AQAJzNxR+PNRIRAA7yUp9hJJdWZ3PVz242Xjiw=='
+    $cinder_rbd_user = 'admin'
+    $cinder_rbd_pool = 'volumes'
+    $cinder_rbd_secret_uuid = 'e80afa94-a64c-486c-9e34-d55e85f26406'
+    $mon_initial_members = 'control-server'
+    $ceph_primary_mon = 'control-server'
+    $ceph_monitor_address = '10.0.0.1,' yes leave the trailing comma intact for now
+    $ceph_deploy_user = 'k9de9kdkasdok'
+    $ceph_deploy_password = 'dsaadsadasdk09as09kdsad'
+    $ceph_cluster_interface = 'eth1'
+    $ceph_public_interface = 'eth1'
+    $ceph_public_network = '10.0.0.0/24'
+    $ceph_cluster_network = '10.0.0.0/24'
 
-Modify your site.pp, leaving all the old ceph configuration options commented out. Add the following ceph configuration options, modifying to fit your environment:
 
-$ceph_monitor_fsid = 'e80afa94-a64c-486c-9e34-d55e85f26406'
-$ceph_monitor_secret = 'AQAJzNxR+PNRIRAA7yUp9hJJdWZ3PVz242Xjiw=='
-$cinder_rbd_user = 'admin'
-$cinder_rbd_pool = 'volumes'
-$cinder_rbd_secret_uuid = 'e80afa94-a64c-486c-9e34-d55e85f26406'
-$mon_initial_members = 'control-server'
-$ceph_primary_mon = 'control-server'
-$ceph_monitor_address = '10.0.0.1,' yes leave the trailing comma intact for now
-$ceph_deploy_user = 'k9de9kdkasdok'
-$ceph_deploy_password = 'dsaadsadasdk09as09kdsad'
-$ceph_cluster_interface = 'eth1'
-$ceph_public_interface = 'eth1'
-$ceph_public_network = '10.0.0.0/24'
-$ceph_cluster_network = '10.0.0.0/24'
-
-The module calls. Add these to your puppet node definitions where the respective service(s) is desired.
+Add these class declarations to your puppet node definitions where the respective service(s) is desired.
 
 This is the base class that installs ceph and configures the requirements on the system. This is the core class that mon, osd, and mds build on. If you are using this on a compute node, you must pass the has_compute arg.
 
