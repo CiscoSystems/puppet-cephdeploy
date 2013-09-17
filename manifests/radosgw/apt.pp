@@ -1,4 +1,4 @@
-class og::apt(){
+class cephdeploy::radosgw::apt(){
 
   apt::key {'apache2':
     key         => '6EAEAE2203C3951A',

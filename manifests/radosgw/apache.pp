@@ -1,4 +1,4 @@
-class og::apache() {
+class cephdeploy::radosgw::apache() {
 
   package {'apache2':
     ensure  => present,

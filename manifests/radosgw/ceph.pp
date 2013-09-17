@@ -1,4 +1,4 @@
-class og::ceph(
+class cephdeploy::radosgw::ceph(
   $cluster,
   $cluster_id,
 ) {
