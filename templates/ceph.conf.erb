@@ -7,3 +7,10 @@ osd journal size = 1024
 filestore xattr use omap = true
 public network = <%= @ceph_public_network %>
 cluster network = <%= @ceph_cluster_network %>
+
+[client.radosgw.gateway]
+host = <%= @hostname %>
+keyring = /etc/ceph/keyring
+rgw socket path = /tmp/radosgw.sock
+log file = /var/log/ceph/radosgw.log
+rgw enable ops log = false
