@@ -1,6 +1,6 @@
 FastCgiExternalServer /var/www/s3gw.fcgi -socket /tmp/radosgw.sock
 
-<VirtualHost *:80>
+<VirtualHost *:8080>
         ServerName <%= @fqdn %>
         DocumentRoot /var/www
         AllowEncodedSlashes On

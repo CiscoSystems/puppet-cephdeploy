@@ -87,10 +87,23 @@ class cephdeploy(
     group  => $user,
   }
 
-  file { "ceph.conf":
+#  file { "ceph.conf":
+#    owner   => $user,
+#    group   => $user,
+#    path    => "/home/$user/bootstrap/ceph.conf",
+#    content => template('cephdeploy/ceph.conf.erb'),
+#    require => File["/home/$user/bootstrap"],
+#  }
+
+  concat { 'ceph.conf':
     owner   => $user,
     group   => $user,
     path    => "/home/$user/bootstrap/ceph.conf",
+  }
+
+  concat::fragment { 'ceph':
+    target => 'ceph.conf', 
+    order  => '01',
     content => template('cephdeploy/ceph.conf.erb'),
     require => File["/home/$user/bootstrap"],
   }
