@@ -14,6 +14,7 @@ class cephdeploy::mds(
 
   exec {'iptables mds':
     command => "/sbin/iptables -A INPUT -i $::ceph_public_interface -m multiport tcp -s $::ceph_public_network --dport 6800:6810 -j ACCEPT",
+    unless  => '/sbin/iptables -L | grep "multiport dports 6800:6810"',
   }
 
 
