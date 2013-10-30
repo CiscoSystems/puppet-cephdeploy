@@ -6,35 +6,16 @@ define cephdeploy::osd(
   $user = $::ceph_deploy_user
   $disk = $name
 
-#  file {'service perms':
-#    mode => 0644,
-#    path => '/etc/ceph/ceph.client.admin.keyring',
-#    require => exec['copy key'],
-#  }
-
-  package { 'sysfsutils':
-    ensure => present,
-  }
-
-  file {"log $disk":
-    owner => $user,
-    group => $user,
-    mode  => 0777,
-    path  => "/home/$user/bootstrap/ceph.log",
-    require => Exec["install ceph"],
-  }
-
   exec { "get config $disk":
     cwd     => "/home/$user/bootstrap",
     user    => $user,
     command => "/usr/local/bin/ceph-deploy config push $::hostname",
-    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], File["log $disk"] ],
+    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"] ],
     unless  => "/usr/bin/test -e /etc/ceph/ceph.conf",
   }
     
   exec { "gatherkeys_$disk":
     cwd     => "/home/$user/bootstrap",
-    user    => $user,
     command => "/usr/local/bin/ceph-deploy gatherkeys $::ceph_primary_mon",
     require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], Exec["get config $disk"] ],
     unless  => "/usr/bin/test -e /home/$user/bootstrap/ceph.bootstrap-osd.keyring",
@@ -65,7 +46,7 @@ define cephdeploy::osd(
     require => [ Exec["zap $disk"], Exec["create osd $disk"], File["/home/$user/zapped"] ],
   }
 
-  exec {'iptables osd':
+  exec {"iptables osd $disk":
     command => "/sbin/iptables -A INPUT -i $::ceph_cluster_interface  -m multiport -p tcp -s $::ceph_cluster_network --dports 6800:6810 -j ACCEPT",
     unless  => '/sbin/iptables -L | grep "multiport dports 6800:6810"',
   }
@@ -86,8 +67,6 @@ define cephdeploy::osd(
     }
 
   }
-
-
 
 
 }
