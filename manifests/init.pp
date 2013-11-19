@@ -1,10 +1,12 @@
 class cephdeploy(
-  $user = $::ceph_deploy_user,
-  $pass = $::ceph_deploy_password,
+  $user = 'cephdeploy',
+  $pass = '32ddq332dcasdc23',
   $has_compute = false,
 ){
 
-  include pip
+#  include pip
+
+## User setup
 
   user {$user:
     ensure => present,
@@ -61,24 +63,18 @@ class cephdeploy(
     require => File["/home/$user/.ssh"],
   }
 
-  file { "/home/$user/zapped":
-    ensure => directory,
-  }
-
   exec {'passwordless sudo for ceph deploy user':
     command => "/bin/echo \"$user ALL = (root) NOPASSWD:ALL\" | sudo tee /etc/sudoers.d/$user",
     unless  => "/usr/bin/test -e /etc/sudoers.d/$user",
   }
- 
+
   file {"/etc/sudoers.d/$user":
     mode    => 0440,
     require => Exec['passwordless sudo for ceph deploy user'],
   }
 
-  exec {'install ceph-deploy':
-    command => '/usr/bin/pip install ceph-deploy', 
-    require => Package['python-pip'],
-    unless  => '/usr/bin/pip install ceph-deploy | /bin/grep satisfied',
+  file { "/home/$user/zapped":
+    ensure => directory,
   }
 
   file {"/home/$user/bootstrap":
@@ -87,27 +83,52 @@ class cephdeploy(
     group  => $user,
   }
 
-  file { "ceph.conf":
+## Install ceph and dependencies
+
+  package {'python-pip':
+    ensure => installed,
+  }
+
+  exec {'install ceph-deploy':
+    command => '/usr/bin/pip install ceph-deploy', 
+    require => Package['python-pip'],
+    unless  => '/usr/bin/pip install ceph-deploy | /bin/grep satisfied',
+  }
+
+# this is here for some forgotten reason but may be useful at some point
+#  file { 'ceph.conf':
+#  file { "/home/$user/bootstrap/ceph.conf":
+#    owner   => $user,
+#    group   => $user,
+#    path    => "/home/$user/bootstrap/ceph.conf",
+#    content => template('cephdeploy/ceph.conf.erb'),
+#    require => File["/home/$user/bootstrap"],
+#  }
+
+## ceph.conf setup
+
+  concat { "/home/$user/bootstrap/ceph.conf":
     owner   => $user,
     group   => $user,
     path    => "/home/$user/bootstrap/ceph.conf",
+    require => File["/home/$user/bootstrap"],
+  }
+
+  concat::fragment { 'ceph':
+    target  => "/home/$user/bootstrap/ceph.conf",
+    order   => '01',
     content => template('cephdeploy/ceph.conf.erb'),
     require => File["/home/$user/bootstrap"],
   }
+
+## Keyring setup
 
   file { "ceph.mon.keyring":
     owner   => $user,
     group   => $user,
     path    => "/home/$user/bootstrap/ceph.mon.keyring",
     content => template('cephdeploy/ceph.mon.keyring.erb'),
-    require => File['ceph.conf'],
-  }
- 
-  exec { "install ceph":
-    cwd     => "/home/$user/bootstrap",
-    command => "/usr/local/bin/ceph-deploy install $::hostname",
-    unless  => '/usr/bin/dpkg -l | grep ceph-common',
-    require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"] ],
+    require => File["/home/$user/bootstrap/ceph.conf"],
   }
 
   file {'service perms':
@@ -115,6 +136,15 @@ class cephdeploy(
     path => '/etc/ceph/ceph.client.admin.keyring',
     require => exec['install ceph'],
   }
+
+  exec { "install ceph":
+    cwd     => "/home/$user/bootstrap",
+    command => "/usr/local/bin/ceph-deploy install $::hostname",
+    unless  => '/usr/bin/dpkg -l | grep ceph-common',
+    require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"] ],
+  }
+
+## If the ceph node is also running nova-compute
 
   if $has_compute {
 
