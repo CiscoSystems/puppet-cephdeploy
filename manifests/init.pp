@@ -1,6 +1,6 @@
 class cephdeploy(
-  $user = $::ceph_deploy_user,
-  $pass = $::ceph_deploy_password,
+  $user = $ceph_deploy_user,
+  $pass = $ceph_deploy_password,
   $has_compute = false,
 ){
 
@@ -63,6 +63,14 @@ class cephdeploy(
     require => File["/home/$user/.ssh"],
   }
 
+  file {"log $user":
+    owner => $user,
+    group => $user,
+    mode => 0777,
+    path => "/home/$user/bootstrap/ceph.log",
+    require => [ Exec["install ceph"], File["/etc/sudoers.d/$user"], File["/home/$user"], User[$user] ],
+  }
+
   exec {'passwordless sudo for ceph deploy user':
     command => "/bin/echo \"$user ALL = (root) NOPASSWD:ALL\" | sudo tee /etc/sudoers.d/$user",
     unless  => "/usr/bin/test -e /etc/sudoers.d/$user",
@@ -94,16 +102,6 @@ class cephdeploy(
     require => Package['python-pip'],
     unless  => '/usr/bin/pip install ceph-deploy | /bin/grep satisfied',
   }
-
-# this is here for some forgotten reason but may be useful at some point
-#  file { 'ceph.conf':
-#  file { "/home/$user/bootstrap/ceph.conf":
-#    owner   => $user,
-#    group   => $user,
-#    path    => "/home/$user/bootstrap/ceph.conf",
-#    content => template('cephdeploy/ceph.conf.erb'),
-#    require => File["/home/$user/bootstrap"],
-#  }
 
 ## ceph.conf setup
 
@@ -143,6 +141,12 @@ class cephdeploy(
     unless  => '/usr/bin/dpkg -l | grep ceph-common',
     require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"] ],
   }
+
+  file { '/etc/ceph/ceph.conf':
+    mode    => 0644,
+    require => Exec["install ceph"],
+  }
+
 
 ## If the ceph node is also running nova-compute
 

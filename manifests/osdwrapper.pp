@@ -1,1 +1,7 @@
-# file to wrap osd defined type with create_resources somehow
+class cephdeploy::osdwrapper(
+  $disks,
+){
+
+  cephdeploy::osd { $disks: }
+
+}

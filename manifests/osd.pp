@@ -9,14 +9,14 @@ define cephdeploy::osd(
   exec { "get config $disk":
     cwd     => "/home/$user/bootstrap",
     user    => $user,
-    command => "/usr/local/bin/ceph-deploy config push $::hostname",
-    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"] ],
+    command => "/usr/bin/sudo /usr/local/bin/ceph-deploy config push $::hostname",
+    require => [ Exec['install ceph'], File['/etc/ceph/ceph.conf'] ],
     unless  => "/usr/bin/test -e /etc/ceph/ceph.conf",
   }
     
   exec { "gatherkeys_$disk":
     cwd     => "/home/$user/bootstrap",
-    command => "/usr/local/bin/ceph-deploy gatherkeys $::ceph_primary_mon",
+    command => "/usr/bin/sudo /usr/local/bin/ceph-deploy gatherkeys $::ceph_primary_mon",
     require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], Exec["get config $disk"] ],
     unless  => "/usr/bin/test -e /home/$user/bootstrap/ceph.bootstrap-osd.keyring",
   }
