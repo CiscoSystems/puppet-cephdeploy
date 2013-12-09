@@ -137,9 +137,10 @@ class cephdeploy(
     path => '/etc/ceph/ceph.client.admin.keyring',
     require => exec['install ceph'],
   }
-
-  package {'libgoogle-perftools0':
-    ensure => installed,
+  
+  package { 'libgoogle-perftools0':
+    ensure => present,
+    require => Exec['install ceph-deploy'],
   }
 
   exec { "install ceph":
