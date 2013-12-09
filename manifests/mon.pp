@@ -1,5 +1,7 @@
 class cephdeploy::mon(
-  $user = $ceph_deploy_user,
+  $user                  = hiera('ceph_deploy_user'),
+  $ceph_public_interface = hiera('ceph_public_interface'),
+  $ceph_public_network   = hiera('ceph_public_network'),
 ){
 
   include cephdeploy
@@ -13,7 +15,7 @@ class cephdeploy::mon(
   }
 
   exec {'iptables mon':
-    command => "/sbin/iptables -A INPUT -i $::ceph_public_interface -p tcp -s $::ceph_public_network --dport 6789 -j ACCEPT",
+    command => "/sbin/iptables -A INPUT -i $ceph_public_interface -p tcp -s $ceph_public_network --dport 6789 -j ACCEPT",
     unless  => '/sbin/iptables -L | grep "tcp dpt:6789"',
   }
 
