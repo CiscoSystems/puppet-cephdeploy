@@ -1,6 +1,6 @@
 class cephdeploy(
-  $user        = $ceph_deploy_user,
-  $pass        = $ceph_deploy_password,
+  $user        = hiera('ceph_deploy_user'),
+  $pass        = hiera('ceph_deploy_password'),
   $has_compute = false,
 ){
 
@@ -100,9 +100,10 @@ class cephdeploy(
   }
 
   exec {'install ceph-deploy':
-    command => '/usr/bin/pip install ceph-deploy', 
+    path    => '/usr/bin:/usr/local/bin',
+    command => 'pip install ceph-deploy', 
     require => Package['python-pip'],
-    unless  => '/usr/bin/pip install ceph-deploy | /bin/grep satisfied',
+    unless  => 'pip install ceph-deploy | /bin/grep satisfied',
   }
 
 ## ceph.conf setup
@@ -137,11 +138,15 @@ class cephdeploy(
     require => exec['install ceph'],
   }
 
+  package {'libgoogle-perftools0':
+    ensure => installed,
+  }
+
   exec { "install ceph":
     cwd     => "/home/$user/bootstrap",
     command => "/usr/local/bin/ceph-deploy install $::hostname",
     unless  => '/usr/bin/dpkg -l | grep ceph-common',
-    require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"] ],
+    require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"], Package['libgoogle-perftools0'] ],
   }
 
   file { '/etc/ceph/ceph.conf':

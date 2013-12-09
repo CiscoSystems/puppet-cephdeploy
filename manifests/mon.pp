@@ -1,5 +1,5 @@
 class cephdeploy::mon(
-  $user                  = hiera('ceph_deploy_user'),
+  $user                  = hiera('cephdeploy'),
   $ceph_public_interface = hiera('ceph_public_interface'),
   $ceph_public_network   = hiera('ceph_public_network'),
 ){
