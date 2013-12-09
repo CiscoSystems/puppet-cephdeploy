@@ -1,6 +1,6 @@
 class cephdeploy(
-  $user = $ceph_deploy_user,
-  $pass = $ceph_deploy_password,
+  $user        = $ceph_deploy_user,
+  $pass        = $ceph_deploy_password,
   $has_compute = false,
 ){
 
@@ -93,8 +93,10 @@ class cephdeploy(
 
 ## Install ceph and dependencies
 
-  package {'python-pip':
-    ensure => installed,
+  if ! defined(Package['python-pip']) {
+    package {'python-pip':
+      ensure => installed,
+    }
   }
 
   exec {'install ceph-deploy':

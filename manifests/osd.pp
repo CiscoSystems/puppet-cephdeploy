@@ -1,10 +1,10 @@
 define cephdeploy::osd(
-  $setup_pools = false,
-  $user = hiera('ceph_deploy_user'),
-  $ceph_primary_mon = hiera('ceph_primary_mon'),
+  $setup_pools            = false,
+  $user                   = hiera('ceph_deploy_user'),
+  $ceph_primary_mon       = hiera('ceph_primary_mon'),
   $ceph_cluster_interface = hiera('ceph_cluster_interface'),
-  $glance_ceph_pool = hiera('glance_ceph_pool'),
-  $cinder_rbd_pool = hiera('cinder_rbd_pool'),
+  $glance_ceph_pool       = hiera('glance_ceph_pool'),
+  $cinder_rbd_pool        = hiera('cinder_rbd_pool'),
 ){
 
   include cephdeploy
