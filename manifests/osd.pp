@@ -18,13 +18,14 @@ define cephdeploy::osd(
     require => [ Exec['install ceph'], File['/etc/ceph/ceph.conf'] ],
     unless  => "/usr/bin/test -e /etc/ceph/ceph.conf",
   }
-    
+  
   exec { "gatherkeys_$disk":
-    cwd     => "/home/$user/bootstrap",
-    command => "/usr/bin/sudo /usr/local/bin/ceph-deploy gatherkeys $ceph_primary_mon",
+    command => "/usr/bin/scp $user@$ceph_primary_mon:bootstrap/*.key* .",
+    user => $user,
+    cwd => "/home/$user/bootstrap",
     require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], Exec["get config $disk"] ],
-    unless  => "/usr/bin/test -e /home/$user/bootstrap/ceph.bootstrap-osd.keyring",
-  }
+    unless => '/usr/bin/test -e /home/$user/bootstrap/$cluster.bootstrap-osd.keyring',
+  }    
 
   exec {"copy admin key $disk":
     command => "/bin/cp /home/$user/bootstrap/ceph.client.admin.keyring /etc/ceph",
