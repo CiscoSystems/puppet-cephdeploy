@@ -101,13 +101,8 @@ class cephdeploy(
 
 ## Install ceph and dependencies
 
-  exec { "apt-get update":
-    command => "/usr/bin/apt-get update",
-  }
-
   package {'ceph-deploy':
-    ensure  => present,
-    require => [ Apt::Source['cisco-openstack-mirror_havana'], Exec["apt-get update"] ],
+    ensure => present,
   }
 
 ## ceph.conf setup
