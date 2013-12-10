@@ -1,15 +1,15 @@
 class cephdeploy(
-  $user        = hiera('ceph_deploy_user'),
-  $ceph_deploy_user        = hiera('ceph_deploy_user'),
-  $pass        = hiera('ceph_deploy_password'),
-  $ceph_deploy_password        = hiera('ceph_deploy_password'),
-  $ceph_monitor_fsid = hiera('ceph_monitor_fsid'),
-  $mon_initial_members = hiera('mon_initial_members'),
+  $user                 = hiera('ceph_deploy_user'),
+  $ceph_deploy_user     = hiera('ceph_deploy_user'),
+  $pass                 = hiera('ceph_deploy_password'),
+  $ceph_deploy_password = hiera('ceph_deploy_password'),
+  $ceph_monitor_fsid    = hiera('ceph_monitor_fsid'),
+  $mon_initial_members  = hiera('mon_initial_members'),
   $ceph_monitor_address = hiera('ceph_monitor_address'),
-  $ceph_public_network = hiera('ceph_public_network'),
+  $ceph_public_network  = hiera('ceph_public_network'),
   $ceph_cluster_network = hiera('ceph_cluster_network'),
-  $ceph_monitor_secret = hiera('ceph_monitor_secret'),
-  $has_compute = false,
+  $ceph_monitor_secret  = hiera('ceph_monitor_secret'),
+  $has_compute          = false,
 ){
 
 #  include pip
@@ -17,65 +17,65 @@ class cephdeploy(
 ## User setup
 
   user {$user:
-    ensure => present,
+    ensure   => present,
     password => $pass,
     home     => "/home/$user",
     shell    => '/bin/bash',
   }
 
   file {"/home/$user":
-    ensure => directory,
-    owner  => $user,
-    group  => $user,
-    mode   => 0755,
+    ensure  => directory,
+    owner   => $user,
+    group   => $user,
+    mode    => 0755,
     require => User[$user],
   }
   
   file {"/home/$user/.ssh":
-    ensure => directory,
-    owner  => $user,
-    group  => $user,
-    mode   => 0700,
+    ensure  => directory,
+    owner   => $user,
+    group   => $user,
+    mode    => 0700,
     require => File["/home/$user"],
   }
 
   file {"/home/$user/.ssh/id_rsa":
     content => template('cephdeploy/id_rsa.erb'),
-    owner  => $user,
-    group  => $user,
-    mode   => 0600,
+    owner   => $user,
+    group   => $user,
+    mode    => 0600,
     require => File["/home/$user/.ssh"],
   }
 
   file {"/home/$user/.ssh/id_rsa.pub":
     content => template('cephdeploy/id_rsa.pub.erb'),
-    owner  => $user,
-    group  => $user,
-    mode   => 0644,
+    owner   => $user,
+    group   => $user,
+    mode    => 0644,
     require => File["/home/$user/.ssh"],
   }
 
   file {"/home/$user/.ssh/authorized_keys":
     content => template('cephdeploy/id_rsa.pub.erb'),
-    owner  => $user,
-    group  => $user,
-    mode   => 0600,
+    owner   => $user,
+    group   => $user,
+    mode    => 0600,
     require => File["/home/$user/.ssh"],
   }
 
   file {"/home/$user/.ssh/config":
     content => template('cephdeploy/config.erb'),
-    owner  => $user,
-    group  => $user,
-    mode   => 0600,
+    owner   => $user,
+    group   => $user,
+    mode    => 0600,
     require => File["/home/$user/.ssh"],
   }
 
   file {"log $user":
-    owner => $user,
-    group => $user,
-    mode => 0777,
-    path => "/home/$user/bootstrap/ceph.log",
+    owner   => $user,
+    group   => $user,
+    mode    => 0777,
+    path    => "/home/$user/bootstrap/ceph.log",
     require => [ Exec["install ceph"], File["/etc/sudoers.d/$user"], File["/home/$user"], User[$user] ],
   }
 
@@ -101,17 +101,8 @@ class cephdeploy(
 
 ## Install ceph and dependencies
 
-  if ! defined(Package['python-pip']) {
-    package {'python-pip':
-      ensure => installed,
-    }
-  }
-
-  exec {'install ceph-deploy':
-    path    => '/usr/bin:/usr/local/bin',
-    command => 'pip install ceph-deploy', 
-    require => Package['python-pip'],
-    unless  => 'pip install ceph-deploy | /bin/grep satisfied',
+  package {'ceph-deploy':
+    ensure => present,
   }
 
 ## ceph.conf setup
@@ -141,21 +132,16 @@ class cephdeploy(
   }
 
   file {'service perms':
-    mode => 0644,
-    path => '/etc/ceph/ceph.client.admin.keyring',
+    mode    => 0644,
+    path    => '/etc/ceph/ceph.client.admin.keyring',
     require => exec['install ceph'],
   }
   
-  package { 'libgoogle-perftools0':
-    ensure => present,
-    require => Exec['install ceph-deploy'],
-  }
-
   exec { "install ceph":
     cwd     => "/home/$user/bootstrap",
-    command => "/usr/local/bin/ceph-deploy install $::hostname",
+    command => "/usr/local/bin/ceph-deploy install --no-adjust-repos --stable dumpling $::hostname",
     unless  => '/usr/bin/dpkg -l | grep ceph-common',
-    require => [ Exec['install ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"], Package['libgoogle-perftools0'] ],
+    require => [ Package['ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"] ],
   }
 
   file { '/etc/ceph/ceph.conf':

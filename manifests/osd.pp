@@ -21,10 +21,10 @@ define cephdeploy::osd(
   
   exec { "gatherkeys_$disk":
     command => "/usr/bin/scp $user@$ceph_primary_mon:bootstrap/*.key* .",
-    user => $user,
-    cwd => "/home/$user/bootstrap",
+    user    => $user,
+    cwd     => "/home/$user/bootstrap",
     require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], Exec["get config $disk"] ],
-    unless => '/usr/bin/test -e /home/$user/bootstrap/$cluster.bootstrap-osd.keyring',
+    unless  => '/usr/bin/test -e /home/$user/bootstrap/$cluster.bootstrap-osd.keyring',
   }    
 
   exec {"copy admin key $disk":
@@ -61,15 +61,15 @@ define cephdeploy::osd(
 
     exec { "create glance images pool $disk":
       command => "/usr/bin/ceph osd pool create $glance_ceph_pool 128",
-      unless => "/usr/bin/rados lspools | grep -sq $glance_ceph_pool",
+      unless  => "/usr/bin/rados lspools | grep -sq $glance_ceph_pool",
       require => Exec["create osd $disk"],
     }
 
     exec { "create cinder volumes pool $disk":
       command => "/usr/bin/ceph osd pool create $cinder_rbd_pool 128",
-      unless => "/usr/bin/rados lspools | grep -sq $cinder_rbd_pool",
+      unless  => "/usr/bin/rados lspools | grep -sq $cinder_rbd_pool",
       require => Exec["create osd $disk"],
-      notify => [ Service['cinder-volume'], Service['nova-compute'] ],
+      notify  => [ Service['cinder-volume'], Service['nova-compute'] ],
     }
 
   }
