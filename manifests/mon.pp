@@ -2,6 +2,8 @@ class cephdeploy::mon(
   $user                  = hiera('ceph_deploy_user'),
   $ceph_public_interface = hiera('ceph_public_interface'),
   $ceph_public_network   = hiera('ceph_public_network'),
+  $ceph_primary_mon      = hiera('ceph_primary_mon'),
+  $cluster               = hiera('ceph_cluster_name'),
 ){
 
   include cephdeploy
@@ -9,7 +11,7 @@ class cephdeploy::mon(
   exec { 'create mon':
     cwd     => "/home/$user/bootstrap",
     command => "/usr/local/bin/ceph-deploy mon create $::hostname",
-    unless  => '/bin/ps -ef | /bin/grep -v grep | /bin/grep ceph-mon',
+    unless  => "/usr/bin/sudo /usr/bin/ceph --cluster=ceph --admin-daemon /var/run/ceph/`hostname -s`-mon.ceph.asok mon_status",
     require => Exec['install ceph'],
     provider => shell,
   }
