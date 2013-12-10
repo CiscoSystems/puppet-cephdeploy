@@ -1,6 +1,14 @@
 class cephdeploy(
   $user        = hiera('ceph_deploy_user'),
+  $ceph_deploy_user        = hiera('ceph_deploy_user'),
   $pass        = hiera('ceph_deploy_password'),
+  $ceph_deploy_password        = hiera('ceph_deploy_password'),
+  $ceph_monitor_fsid = hiera('ceph_monitor_fsid'),
+  $mon_initial_members = hiera('mon_initial_members'),
+  $ceph_monitor_address = hiera('ceph_monitor_address'),
+  $ceph_public_network = hiera('ceph_public_network'),
+  $ceph_cluster_network = hiera('ceph_cluster_network'),
+  $ceph_monitor_secret = hiera('ceph_monitor_secret'),
   $has_compute = false,
 ){
 
