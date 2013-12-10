@@ -1,0 +1,26 @@
+FastCgiExternalServer /var/www/s3gw.fcgi -socket /tmp/radosgw.sock
+
+<VirtualHost *:8080>
+        ServerName <%= @fqdn %>
+        DocumentRoot /var/www
+        AllowEncodedSlashes On
+        ErrorLog /var/log/apache2/error.log
+        CustomLog /var/log/apache2/access.log combined
+        ServerSignature Off
+
+        <IfModule mod_fastcgi.c>
+                <Directory /var/www>
+                        Options +ExecCGI
+                        AllowOverride All
+                        SetHandler fastcgi-script
+                        Order allow,deny
+                        Allow from all
+                        AuthBasicAuthoritative Off
+                </Directory>
+        </IfModule>
+
+</VirtualHost>
+
+# rewrite rule for s3 compatibility
+RewriteEngine On
+RewriteRule ^/([a-zA-Z0-9-_.]*)([/]?.*) /s3gw.fcgi?page=$1&params=$2&%{QUERY_STRING} [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
