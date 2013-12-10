@@ -14,7 +14,7 @@ define cephdeploy::osd(
   exec { "get config $disk":
     cwd     => "/home/$user/bootstrap",
     user    => $user,
-    command => "/usr/bin/sudo /usr/local/bin/ceph-deploy config push $::hostname",
+    command => "/usr/bin/sudo /usr/bin/ceph-deploy config push $::hostname",
     require => [ Exec['install ceph'], File['/etc/ceph/ceph.conf'] ],
     unless  => "/usr/bin/test -e /etc/ceph/ceph.conf",
   }
@@ -35,14 +35,14 @@ define cephdeploy::osd(
 
   exec { "zap $disk":
     cwd     => "/home/$user/bootstrap",
-    command => "/usr/local/bin/ceph-deploy disk zap $::hostname:$disk",
+    command => "/usr/bin/ceph-deploy disk zap $::hostname:$disk",
     require => [ Exec['install ceph'], Exec["gatherkeys_$disk"] ],
     unless  => "/usr/bin/test -e /home/$user/zapped/$disk",
   }
 
   exec { "create osd $disk":
     cwd     => "/home/$user/bootstrap",
-    command => "/usr/local/bin/ceph-deploy --overwrite-conf osd create $::hostname:$disk",
+    command => "/usr/bin/ceph-deploy --overwrite-conf osd create $::hostname:$disk",
     require => Exec["zap $disk"],
     unless  => "/usr/bin/test -e /home/$user/zapped/$disk",
   }

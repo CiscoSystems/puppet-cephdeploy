@@ -10,7 +10,7 @@ class cephdeploy::mon(
 
   exec { 'create mon':
     cwd      => "/home/$user/bootstrap",
-    command  => "/usr/local/bin/ceph-deploy mon create $::hostname",
+    command  => "/usr/bin/ceph-deploy mon create $::hostname",
     unless   => "/usr/bin/sudo /usr/bin/ceph --cluster=ceph --admin-daemon /var/run/ceph/`hostname -s`-mon.ceph.asok mon_status",
     require  => Exec['install ceph'],
     provider => shell,
