@@ -103,6 +103,7 @@ class cephdeploy(
 
   package {'ceph-deploy':
     ensure => present,
+    require => Class['coe::base'],
   }
 
 ## ceph.conf setup
