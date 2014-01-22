@@ -162,7 +162,7 @@ class cephdeploy(
     exec { 'get-or-set virsh secret':
       command => '/usr/bin/virsh secret-define --file /etc/ceph/secret.xml | /usr/bin/awk \'{print $2}\' | sed \'/^$/d\' > /etc/ceph/virsh.secret',
       creates => "/etc/ceph/virsh.secret",
-      require => [ File['ceph.conf'], Package['libvirt-bin'], File['/etc/ceph/secret.xml'] ],
+      require => [ File['/etc/ceph/ceph.conf'], Package['libvirt-bin'], File['/etc/ceph/secret.xml'] ],
     }
 
     exec { 'set-secret-value virsh':
