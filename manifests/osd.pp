@@ -1,5 +1,5 @@
 define cephdeploy::osd(
-  $setup_pools            = false,
+  $setup_pools            = true,
   $user                   = hiera('ceph_deploy_user'),
   $ceph_primary_mon       = hiera('ceph_primary_mon'),
   $ceph_cluster_interface = hiera('ceph_cluster_interface'),
