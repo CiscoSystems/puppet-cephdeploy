@@ -12,8 +12,6 @@ class cephdeploy(
   $has_compute          = false,
 ){
 
-#  include pip
-
 ## User setup
 
   user {$user:

@@ -3,8 +3,6 @@ class cephdeploy::baseconfig(
   $pass = $::ceph_deploy_password,
 ){
 
-  include pip
-
   user {$user:
     ensure => present,
     password => $pass,
@@ -76,20 +74,18 @@ class cephdeploy::baseconfig(
     group => $user,
     mode  => 0777,
     path  => "/home/$user/bootstrap/ceph.log",
-    require => [ Exec["install ceph"], file["/etc/sudoers.d/$user"], ],
+    require => [ Exec["install ceph"], File["/etc/sudoers.d/$user"], ],
   }
 
-  exec {'install ceph-deploy':
-    command => '/usr/bin/pip install ceph-deploy', 
-    unless  => '/usr/bin/pip install ceph-deploy | /bin/grep satisfied',
-    require => Package['python-pip']
+  package { 'ceph-deploy':
+    ensure => present,
   }
 
   file {"/home/$user/bootstrap":
     ensure => directory,
     owner  => $user,
     group  => $user,
-    require => file["/etc/sudoers.d/$user"],
+    require => File["/etc/sudoers.d/$user"],
   }
 
   file { "ceph.conf":
@@ -112,7 +108,7 @@ class cephdeploy::baseconfig(
     cwd     => "/home/$user/bootstrap",
     command => "/usr/local/bin/ceph-deploy install $::hostname",
     unless  => '/usr/bin/dpkg -l | grep ceph-common',
-    require => file["ceph.mon.keyring"],
+    require => File["ceph.mon.keyring"],
   }
 
   exec {'gatherkeys':
@@ -120,25 +116,25 @@ class cephdeploy::baseconfig(
     command => "/usr/local/bin/ceph-deploy gatherkeys $::ceph_primary_mon",
     unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
     user     => $user,
-    require => exec['install ceph'],
+    require => Exec['install ceph'],
   }
 
   exec {'copy key':
     command => "/bin/cp /home/$user/bootstrap/ceph.client.admin.keyring /etc/ceph",
     unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
-    require => exec['gatherkeys'],
+    require => Exec['gatherkeys'],
   }
   
   exec {'copy ceph.conf':
     command => "/bin/cp /home/$user/bootstrap/ceph.conf /etc/ceph",
     unless  => '/usr/bin/test -e /etc/ceph/ceph.conf',
-    require => exec['gatherkeys'],
+    require => Exec['gatherkeys'],
   }
 
   file {'service perms':
     mode => 0644,
     path => '/etc/ceph/ceph.client.admin.keyring',
-    require => exec['copy key'],
+    require => Exec['copy key'],
   }
 
 
