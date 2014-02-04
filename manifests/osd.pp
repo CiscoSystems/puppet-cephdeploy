@@ -9,7 +9,23 @@ define cephdeploy::osd(
 ){
 
   include cephdeploy
-  $disk = $name
+
+  $disk_hash = $name
+  $disk_array = split($disk_hash, ':')
+  $disk = $disk_array[0]
+  $disk_journal = $disk_array[1]
+  if $disk_journal {
+    $disk_journal_real = $disk_journal
+  } else {
+    $disk_journal_real = $disk
+  }
+
+  exec { "create osd $disk":
+     cwd     => "/home/$user/bootstrap",
+     command => "/usr/bin/ceph-deploy --overwrite-conf osd create $::hostname:$disk:$disk_journal_real",
+     require => Exec["zap $disk"],
+     unless  => "/usr/bin/test -e /home/$user/zapped/$disk",
+  }
 
   exec { "get config $disk":
     cwd     => "/home/$user/bootstrap",
@@ -18,14 +34,14 @@ define cephdeploy::osd(
     require => [ Exec['install ceph'], File['/etc/ceph/ceph.conf'] ],
     unless  => "/usr/bin/test -e /etc/ceph/ceph.conf",
   }
-  
+
   exec { "gatherkeys_$disk":
     command => "/usr/bin/scp $user@$ceph_primary_mon:bootstrap/*.key* .",
     user    => $user,
     cwd     => "/home/$user/bootstrap",
     require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], Exec["get config $disk"] ],
     unless  => '/usr/bin/test -e /home/$user/bootstrap/$cluster.bootstrap-osd.keyring',
-  }    
+  }
 
   exec {"copy admin key $disk":
     command => "/bin/cp /home/$user/bootstrap/ceph.client.admin.keyring /etc/ceph",
@@ -40,13 +56,6 @@ define cephdeploy::osd(
     unless  => "/usr/bin/test -e /home/$user/zapped/$disk",
   }
 
-  exec { "create osd $disk":
-    cwd     => "/home/$user/bootstrap",
-    command => "/usr/bin/ceph-deploy --overwrite-conf osd create $::hostname:$disk",
-    require => Exec["zap $disk"],
-    unless  => "/usr/bin/test -e /home/$user/zapped/$disk",
-  }
-  
   file { "/home/$user/zapped/$disk":
     ensure  => present,
     require => [ Exec["zap $disk"], Exec["create osd $disk"], File["/home/$user/zapped"] ],
@@ -76,3 +85,4 @@ define cephdeploy::osd(
 
 
 }
+
