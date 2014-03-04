@@ -78,7 +78,6 @@ define cephdeploy::osd(
       command => "/usr/bin/ceph osd pool create $cinder_rbd_pool 128",
       unless  => "/usr/bin/rados lspools | grep -sq $cinder_rbd_pool",
       require => Exec["create osd $disk"],
-      notify  => [ Service['cinder-volume'], Service['nova-compute'] ],
     }
 
   }
