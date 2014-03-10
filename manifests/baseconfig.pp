@@ -106,14 +106,14 @@ class cephdeploy::baseconfig(
 
   exec { "install ceph":
     cwd     => "/home/$user/bootstrap",
-    command => "/usr/local/bin/ceph-deploy install $::hostname",
+    command => "/usr/bin/ceph-deploy install --no-adjust-repos $::hostname",
     unless  => '/usr/bin/dpkg -l | grep ceph-common',
     require => File["ceph.mon.keyring"],
   }
 
   exec {'gatherkeys':
     cwd     => "/home/$user/bootstrap",
-    command => "/usr/local/bin/ceph-deploy gatherkeys $::ceph_primary_mon",
+    command => "/usr/bin/ceph-deploy gatherkeys $::ceph_primary_mon",
     unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
     user     => $user,
     require => Exec['install ceph'],
