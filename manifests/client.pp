@@ -1,8 +1,40 @@
+#   Copyright 2013-2014 Cisco Systems, Inc.
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#
+#   Author: Donald Talton <dotalton@cisco.com>
+
+# === Parameters:
+#
+# [*ceph_deploy_user*]
+#   (required) The cephdeploy account username
+#
+# [*primary_mon*]
+#   (require) The primary MON in the monmap.
+#
+# [*pass*]
+#   (required) The cephdeploy account password.
+#
+# [*setup_virsh*]
+#   (optional) Configure virsh with ceph secret.
+#   This allows nova-compute to use rbd.
+
+
 class cephdeploy::client(
-  $ceph_deploy_user = hiera('ceph_deploy_user'),
-  $primary_mon      = hiera('ceph_primary_mon'),
-  $pass             = hiera('ceph_deploy_password'),
-  $setup_virsh      = true,
+  $ceph_deploy_user,
+  $pass,
+  $primary_mon,
+  $setup_virsh = true,
 ){
 
 ## User setup
@@ -132,7 +164,7 @@ class cephdeploy::client(
 
     exec { 'get-or-set virsh secret':
       command => '/usr/bin/virsh secret-define --file /etc/ceph/secret.xml | /usr/bin/awk \'{print $2}\' | sed \'/^$/d\' > /etc/ceph/virsh.secret',
-      creates => "/etc/ceph/virsh.secret",
+      creates => '/etc/ceph/virsh.secret',
       require => [ Package['libvirt-bin'], File['/etc/ceph/secret.xml'] ],
     }
 

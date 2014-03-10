@@ -1,11 +1,51 @@
+#   Copyright 2013-2014 Cisco Systems, Inc.
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#
+#   Author: Donald Talton <dotalton@cisco.com>
+
+# === Parameters:
+#
+# [*setup_pools*]
+#   (optional) Create the cinder and glance rbd pools.
+#
+# [*ceph_deploy_user*]
+#   (required) The cephdeploy account username
+#
+# [*ceph_primary_mon*]
+#   (required) The primary MON in the monmap.
+#
+# [*ceph_cluster_interface*]
+#   (required) The name of the network interface clients use to connect to Ceph nodes.
+#
+# [*ceph_cluster_network*]
+#   (required) The network clients use to connect to Ceph nodes.
+#
+# [*glance_ceph_pool*]
+#   (optional) The name of the glance rbd pool.
+#
+# [*cinder_rbd_pool*]
+#   (optional) The name of the cinder rbd pool.
+
+
 define cephdeploy::osd(
-  $setup_pools            = true,
-  $user                   = hiera('ceph_deploy_user'),
-  $ceph_primary_mon       = hiera('ceph_primary_mon'),
-  $ceph_cluster_interface = hiera('ceph_cluster_interface'),
-  $ceph_cluster_network   = hiera('ceph_cluster_network'),
-  $glance_ceph_pool       = hiera('glance_ceph_pool'),
-  $cinder_rbd_pool        = hiera('cinder_rbd_pool'),
+  $setup_pools = true,
+  $ceph_deploy_user,
+  $ceph_primary_mon,
+  $ceph_cluster_interface,
+  $ceph_cluster_network,
+  $glance_ceph_pool,
+  $cinder_rbd_pool,
 ){
 
   include cephdeploy
@@ -21,44 +61,44 @@ define cephdeploy::osd(
   }
 
   exec { "create osd $disk":
-     cwd     => "/home/$user/bootstrap",
+     cwd     => "/home/$ceph_deploy_user/bootstrap",
      command => "/usr/bin/ceph-deploy --overwrite-conf osd create $::hostname:$disk:$disk_journal_real",
      require => Exec["zap $disk"],
-     unless  => "/usr/bin/test -e /home/$user/zapped/$disk",
+     unless  => "/usr/bin/test -e /home/$ceph_deploy_user/zapped/$disk",
   }
 
   exec { "get config $disk":
-    cwd     => "/home/$user/bootstrap",
-    user    => $user,
+    cwd     => "/home/$ceph_deploy_user/bootstrap",
+    user    => $ceph_deploy_user,
     command => "/usr/bin/sudo /usr/bin/ceph-deploy config push $::hostname",
     require => [ Exec['install ceph'], File['/etc/ceph/ceph.conf'] ],
-    unless  => "/usr/bin/test -e /etc/ceph/ceph.conf",
+    unless  => '/usr/bin/test -e /etc/ceph/ceph.conf',
   }
 
   exec { "gatherkeys_$disk":
-    command => "/usr/bin/scp $user@$ceph_primary_mon:bootstrap/*.key* .",
-    user    => $user,
-    cwd     => "/home/$user/bootstrap",
-    require => [ Exec['install ceph'], File["/etc/sudoers.d/$user"], Exec["get config $disk"] ],
-    unless  => '/usr/bin/test -e /home/$user/bootstrap/$cluster.bootstrap-osd.keyring',
+    command => "/usr/bin/scp $ceph_deploy_user@$ceph_primary_mon:bootstrap/*.key* .",
+    user    => $ceph_deploy_user,
+    cwd     => "/home/$ceph_deploy_user/bootstrap",
+    require => [ Exec['install ceph'], File["/etc/sudoers.d/$ceph_deploy_user"], Exec["get config $disk"] ],
+    unless  => '/usr/bin/test -e /home/$ceph_deploy_user/bootstrap/$cluster.bootstrap-osd.keyring',
   }
 
   exec {"copy admin key $disk":
-    command => "/bin/cp /home/$user/bootstrap/ceph.client.admin.keyring /etc/ceph",
+    command => "/bin/cp /home/$ceph_deploy_user/bootstrap/ceph.client.admin.keyring /etc/ceph",
     unless  => '/usr/bin/test -e /etc/ceph/ceph.client.admin.keyring',
     require => Exec["gatherkeys_$disk"],
   }
 
   exec { "zap $disk":
-    cwd     => "/home/$user/bootstrap",
+    cwd     => "/home/$ceph_deploy_user/bootstrap",
     command => "/usr/bin/ceph-deploy disk zap $::hostname:$disk",
     require => [ Exec['install ceph'], Exec["gatherkeys_$disk"] ],
-    unless  => "/usr/bin/test -e /home/$user/zapped/$disk",
+    unless  => "/usr/bin/test -e /home/$ceph_deploy_user/zapped/$disk",
   }
 
-  file { "/home/$user/zapped/$disk":
+  file { "/home/$ceph_deploy_user/zapped/$disk":
     ensure  => present,
-    require => [ Exec["zap $disk"], Exec["create osd $disk"], File["/home/$user/zapped"] ],
+    require => [ Exec["zap $disk"], Exec["create osd $disk"], File["/home/$ceph_deploy_user/zapped"] ],
   }
 
   exec {"iptables osd $disk":
