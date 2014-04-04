@@ -39,6 +39,9 @@
 # [*ceph_cluster_network*]
 #   (required) The data replication network.
 #
+# [*ceph_release*]
+#   (required) The Ceph release to use.
+#
 # [*has_compute*]
 #   (required) Whether or not the host has nova-compute running.
 
@@ -51,6 +54,7 @@ class cephdeploy(
   $ceph_monitor_address,
   $ceph_public_network,
   $ceph_cluster_network,
+  $ceph_release = 'emperor',
   $has_compute = false,
 ){
 
@@ -140,6 +144,19 @@ class cephdeploy(
   }
 
 ## Install ceph and dependencies
+
+  case $::osfamily {
+    'RedHat', 'Suse': {
+      cephdeploy::yum {'ceph-packages':
+	release => $ceph_release,
+      }
+    }
+    'Debian': {
+      cephdeploy::apt {'ceph-packages':
+        release => $ceph_release,
+      }
+    }
+  }
 
   package {'ceph-deploy':
     ensure => present,
