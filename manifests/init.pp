@@ -162,6 +162,15 @@ class cephdeploy(
     ensure => present,
   }
 
+  case $::osfamily {
+    'RedHat': {
+      file { "/lib/udev/rules.d/95-ceph-osd.rules":
+        ensure  => file,
+        content => template('templates/95-ceph-osd.rules.erb'),
+      }
+    }
+  }
+
 ## ceph.conf setup
 
   concat { "/home/$ceph_deploy_user/bootstrap/ceph.conf":
