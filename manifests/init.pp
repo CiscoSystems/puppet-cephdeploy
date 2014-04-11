@@ -162,15 +162,6 @@ class cephdeploy(
     ensure => present,
   }
 
-  case $::osfamily {
-    'RedHat': {
-      file { "/lib/udev/rules.d/95-ceph-osd.rules":
-        ensure  => file,
-        content => template('cephdeploy/95-ceph-osd.rules.erb'),
-      }
-    }
-  }
-
 ## ceph.conf setup
 
   concat { "/home/$ceph_deploy_user/bootstrap/ceph.conf":
@@ -207,6 +198,15 @@ class cephdeploy(
     cwd     => "/home/$ceph_deploy_user/bootstrap",
     command => "/usr/bin/ceph-deploy install --no-adjust-repos $::hostname",
     require => [ Package['ceph-deploy'], File['ceph.mon.keyring'], File["/home/$ceph_deploy_user/bootstrap"] ],
+  }
+
+  case $::osfamily {
+    'RedHat': {
+      file { '/lib/udev/rules.d/95-ceph-osd.rules':
+        ensure  => file,
+        content => template('cephdeploy/95-ceph-osd.rules.erb'),
+      }
+    }
   }
 
   file { '/etc/ceph/ceph.conf':
