@@ -166,7 +166,7 @@ class cephdeploy(
     'RedHat': {
       file { "/lib/udev/rules.d/95-ceph-osd.rules":
         ensure  => file,
-        content => template('templates/95-ceph-osd.rules.erb'),
+        content => template('cephdeploy/95-ceph-osd.rules.erb'),
       }
     }
   }
