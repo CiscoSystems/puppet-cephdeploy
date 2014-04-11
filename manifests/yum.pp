@@ -23,9 +23,31 @@ define cephdeploy::yum (
     before => Package['ceph-deploy'],
   }
 
+  yumrepo { 'ceph-noarch':
+    descr => "Ceph ${release} noarch repository",
+    baseurl => "http://ceph.com/rpm-${release}/${system}/noarch/",
+    gpgkey =>
+      'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc',
+    gpgcheck => 1,
+    enabled => 1,
+    priority => 5,
+    before => Package['ceph-deploy'],
+  }
+
   yumrepo { 'ceph-extras':
     descr => "Ceph Extras repository",
     baseurl => "http://ceph.com/packages/ceph-extras/rpm/${system_extras}/x86_64/",
+    gpgkey =>
+      'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc',
+    gpgcheck => 1,
+    enabled => 1,
+    priority => 5,
+    before => Package['ceph-deploy'],
+  }
+
+  yumrepo { 'ceph-extras-noarch':
+    descr => "Ceph Extras repository",
+    baseurl => "http://ceph.com/packages/ceph-extras/rpm/${system_extras}/noarch",
     gpgkey =>
       'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc',
     gpgcheck => 1,
