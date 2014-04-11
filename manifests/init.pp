@@ -205,6 +205,7 @@ class cephdeploy(
       file { '/lib/udev/rules.d/95-ceph-osd.rules':
         ensure  => file,
         content => template('cephdeploy/95-ceph-osd.rules.erb'),
+	require => Exec['install ceph']
       }
     }
   }
@@ -213,7 +214,6 @@ class cephdeploy(
     mode    => 0644,
     require => Exec['install ceph'],
   }
-
 
 ## If the ceph node is also running nova-compute
 
