@@ -47,7 +47,7 @@ define cephdeploy::yum (
 
   yumrepo { 'ceph-extras-noarch':
     descr => "Ceph Extras repository",
-    baseurl => "http://ceph.com/packages/ceph-extras/rpm/${system_extras}/noarch",
+    baseurl => "http://ceph.com/packages/ceph-extras/rpm/${system_extras}/noarch/",
     gpgkey =>
       'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc',
     gpgcheck => 1,
