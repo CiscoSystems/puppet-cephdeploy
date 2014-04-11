@@ -3,8 +3,8 @@ define cephdeploy::yum (
 ) {
   case $::osfamily {
     'RedHat': {
-      $system = "el6"
-      $system_extras = "el6"
+      $system = "rhel6"
+      $system_extras = "rhel6"
     }
     'Suse': {
       $system = "sles11"
