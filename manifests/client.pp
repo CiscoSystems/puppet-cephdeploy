@@ -31,11 +31,11 @@
 
 
 class cephdeploy::client(
-  $ceph_deploy_user,
-  $pass,
-  $primary_mon,
-  $setup_virsh = true,
-){
+  $ceph_deploy_user = $cephdeploy::params::ceph_deploy_user,
+  $pass = $cephdeploy::params::pass,
+  $primary_mon = $cephdeploy::params::primary_mon,
+  $setup_virsh = $cephdeploy::params::setup_virsh,
+) inherits cephdeploy::params {
 
 ## User setup
 

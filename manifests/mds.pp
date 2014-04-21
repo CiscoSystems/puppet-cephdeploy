@@ -18,8 +18,8 @@
 ## WIP not yet functional
 
 class cephdeploy::mds(
-  $user = $::ceph_deploy_user,
-){
+  $user = $cephdeploy::params::ceph_deploy_user,
+) inherits cephdeploy::params {
 
   include cephdeploy
 

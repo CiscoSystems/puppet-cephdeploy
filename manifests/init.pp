@@ -47,16 +47,16 @@
 
 
 class cephdeploy(
-  $ceph_deploy_user,
-  $ceph_deploy_password,
-  $ceph_monitor_fsid,
-  $mon_initial_members,
-  $ceph_monitor_address,
-  $ceph_public_network,
-  $ceph_cluster_network,
-  $ceph_release = 'emperor',
-  $has_compute = false,
-){
+  $ceph_deploy_user = $cephdeploy::params::ceph_deploy_user,
+  $ceph_deploy_password= $cephdeploy::params::ceph_deploy_password,
+  $ceph_monitor_fsid = $cephdeploy::params::ceph_monitor_fsid,
+  $mon_initial_members = $cephdeploy::params::mon_initial_members,
+  $ceph_monitor_address = $cephdeploy::params::ceph_monitor_address,
+  $ceph_public_network = $cephdeploy::params::ceph_public_network,
+  $ceph_cluster_network= $cephdeploy::params::ceph_cluster_network,
+  $ceph_release = $cephdeploy::params::ceph_release,
+  $has_compute = $cephdeploy::params::has_compute,
+) inherits cephdeploy::params {
 
 ## User setup
 
