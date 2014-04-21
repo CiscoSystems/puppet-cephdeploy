@@ -33,7 +33,7 @@ class cephdeploy::params {
   $ceph_cluster_interface = getvar("::${variable_prefix}ceph_cluster_interface")
 
   # Whether to configure virsh or not
-  $ceph_setup_virsh = pick(getvar("::${variable_prefix}ceph_setup_virsh"),
+  $setup_virsh = pick(getvar("::${variable_prefix}setup_virsh"),
                          'true')
 
   # The primary MON server
