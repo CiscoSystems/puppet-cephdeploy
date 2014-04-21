@@ -1,8 +1,12 @@
 class cephdeploy::params {
 
   # The variable prefix to be used for configuration settings:
-  # * default "" to resemble previous behaviour
-  $variable_prefix = getvar("${variable_prefix}")
+  # * default '' to resemble previous behaviour
+  if $configuration_variable_prefix {
+    $variable_prefix = $configuration_variable_prefix
+  } else {
+    $variable_prefix = ''
+  }
 
   # Whether to automatically create the required pools for OpenStack
   $setup_pools = pick(getvar("::${variable_prefix}setup_pools"),
@@ -65,4 +69,7 @@ class cephdeploy::params {
   # The address of the primary Ceph MON server
   $ceph_monitor_address = getvar("::${variable_prefix}ceph_monitor_address")
 
-  }
+  # The name of the Ceph cluster
+  $ceph_cluster_name = getvar("::${variable_prefix}ceph_cluster_name")
+
+}
