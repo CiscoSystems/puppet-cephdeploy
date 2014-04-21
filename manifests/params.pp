@@ -1,4 +1,4 @@
-﻿class cephdeploy::params {
+class cephdeploy::params {
 
   # The variable prefix to be used for configuration settings:
   # * default "" to resemble previous behaviour
