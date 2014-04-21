@@ -53,7 +53,13 @@ class cephdeploy::osdwrapper(
   $cinder_rbd_pool = $cephdeploy::params::cinder_rbd_pool,
 ) inherits cephdeploy::params {
 
-  cephdeploy::osd { $disks:
+  if is_string($disks) {
+    $actual_disks = split($disks,',')
+  } else {
+    $actual_disks = $disks
+  }
+
+  cephdeploy::osd { $actual_disks:
     setup_pools            => $setup_pools,
     ceph_deploy_user       => $ceph_deploy_user,
     ceph_primary_mon       => $ceph_primary_mon,
