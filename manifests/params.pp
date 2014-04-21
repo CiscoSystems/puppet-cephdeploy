@@ -2,7 +2,7 @@ class cephdeploy::params {
 
   # The variable prefix to be used for configuration settings:
   # * default "" to resemble previous behaviour
-  $variable_prefix = ''
+  $variable_prefix = getvar("${variable_prefix}")
 
   # Whether to automatically create the required pools for OpenStack
   $setup_pools = pick(getvar("::${variable_prefix}setup_pools"),
