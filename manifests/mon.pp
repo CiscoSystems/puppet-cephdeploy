@@ -34,12 +34,12 @@
 
 
 class cephdeploy::mon(
-  $ceph_deploy_user,
-  $ceph_public_interface,
-  $ceph_public_network,
-  $ceph_primary_mon,
-  $ceph_cluster_name,
-){
+  $ceph_deploy_user = $cephdeploy::params::ceph_deploy_user,
+  $ceph_public_interface = $cephdeploy::params::ceph_public_interface,
+  $ceph_public_network = $cephdeploy::params::ceph_public_network,
+  $ceph_primary_mon = $cephdeploy::params::ceph_primary_mon,
+  $ceph_cluster_name = $cephdeploy::params::ceph_cluster_name,
+) inherits cephdeploy::params {
 
   include cephdeploy
 
