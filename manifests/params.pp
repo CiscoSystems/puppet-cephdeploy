@@ -64,3 +64,5 @@ class cephdeploy::params {
 
   # The address of the primary Ceph MON server
   $ceph_monitor_address = getvar("::${variable_prefix}ceph_monitor_address")
+
+  }
