@@ -217,7 +217,7 @@ class cephdeploy(
 
 ## If the ceph node is also running nova-compute
 
-  if $has_compute {
+  if $has_compute == 'true' {
 
     file { '/etc/ceph/secret.xml':
       content => template('cephdeploy/secret.xml-compute.erb'),
