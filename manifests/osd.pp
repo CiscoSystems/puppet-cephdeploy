@@ -107,7 +107,7 @@ define cephdeploy::osd(
     unless  => '/sbin/iptables -L | grep "multiport dports 6800:6810"',
   }
 
-  if $setup_pools == 'true' {
+  if $setup_pools {
 
     exec { "create glance images pool $disk":
       command => "/usr/bin/ceph osd pool create $glance_ceph_pool 128",

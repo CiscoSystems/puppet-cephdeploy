@@ -149,7 +149,7 @@ class cephdeploy::client(
   }
 
 
-  if $setup_virsh == 'true' {
+  if $setup_virsh {
 
     if !defined(Package['libvirt-bin']) {
       package {'libvirt-bin':
