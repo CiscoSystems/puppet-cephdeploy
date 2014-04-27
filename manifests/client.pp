@@ -42,6 +42,7 @@ class cephdeploy::client(
   $ceph_cluster_name = $cephdeploy::params::ceph_cluster_name,
   $glance_ceph_user = $cephdeploy::params::glance_ceph_user,
   $cinder_rbd_user = $cephdeploy::params::cinder_rbd_user,
+  $puppet_install_repositories = $cephdeploy::params::puppet_install_repositories,
 ) inherits cephdeploy::params {
 
 ## User setup
@@ -120,6 +121,23 @@ class cephdeploy::client(
   }
 
   # install ceph client packages
+
+  case $::osfamily {
+    'RedHat', 'Suse': {
+      if $ceph_install_repositories == 'true' {
+        cephdeploy::yum {'ceph-packages':
+          release => $ceph_release,
+        }
+      }
+    }
+    'Debian': {
+      if $ceph_install_repositories == 'true' {
+        cephdeploy::apt {'ceph-packages':
+          release => $ceph_release,
+        }
+      }
+    }
+  }
 
   package {'ceph-common':
     ensure  => present,
