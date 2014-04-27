@@ -122,6 +122,10 @@ class cephdeploy::client(
 
   # install ceph client packages
 
+  package {'ceph-deploy':
+      ensure => present,
+  }
+
   case $::osfamily {
     'RedHat', 'Suse': {
       if $ceph_install_repositories == 'true' {
