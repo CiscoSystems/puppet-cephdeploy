@@ -191,14 +191,14 @@ class cephdeploy(
 
   if $setup_pools == 'true' {
 
-    concat::fragmet { 'glance':
+    concat::fragment { 'glance':
       target => "/home/$ceph_deploy_user/bootstrap/ceph.conf",
       order => '02',
       content => template('cephdeploy/glance.ceph.conf.erb'),
       require => File["/home/$ceph_deploy_user/bootstrap"],
     }
 
-    concat::fragmet { 'cinder':
+    concat::fragment { 'cinder':
       target => "/home/$ceph_deploy_user/bootstrap/ceph.conf",
       order => '02',
       content => template('cephdeploy/cinder.ceph.conf.erb'),
