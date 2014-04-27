@@ -150,11 +150,13 @@ class cephdeploy(
       cephdeploy::yum {'ceph-packages':
 	release => $ceph_release,
       }
+      $check_cmd = '/bin/rpm -qa | grep "ceph-[0-9]"'
     }
     'Debian': {
       cephdeploy::apt {'ceph-packages':
         release => $ceph_release,
       }
+      $check_cmd = '/usr/bin/dpkg -l | grep ceph-common'
     }
   }
 
@@ -197,6 +199,7 @@ class cephdeploy(
   exec { 'install ceph':
     cwd     => "/home/$ceph_deploy_user/bootstrap",
     command => "/usr/bin/ceph-deploy install --no-adjust-repos $::hostname",
+    unless  => $check_cmd,
     require => [ Package['ceph-deploy'], File['ceph.mon.keyring'], File["/home/$ceph_deploy_user/bootstrap"] ],
   }
 
