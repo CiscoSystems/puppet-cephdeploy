@@ -200,7 +200,7 @@ class cephdeploy(
 
     concat::fragment { 'cinder':
       target => "/home/$ceph_deploy_user/bootstrap/ceph.conf",
-      order => '02',
+      order => '03',
       content => template('cephdeploy/cinder.ceph.conf.erb'),
       require => File["/home/$ceph_deploy_user/bootstrap"],
     }
