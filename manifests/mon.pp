@@ -39,6 +39,11 @@ class cephdeploy::mon(
   $ceph_public_network = $cephdeploy::params::ceph_public_network,
   $ceph_primary_mon = $cephdeploy::params::ceph_primary_mon,
   $ceph_cluster_name = $cephdeploy::params::ceph_cluster_name,
+  $setup_pools = $cephdeploy::params::setup_pools,
+  $glance_ceph_user = $cephdeploy::params::glance_ceph_user
+  $glance_ceph_pool = $cephdeploy::params::glance_ceph_pool
+  $cinder_rbd_user = $cephdeploy::params::cinder_rbd_user
+  $cinder_rbd_pool = $cephdeploy::params::cinder_rbd_pool
 ) inherits cephdeploy::params {
 
   include cephdeploy
@@ -71,5 +76,38 @@ chmod 644 /home/$ceph_deploy_user/bootstrap/*
     unless  => '/sbin/iptables -L | grep "tcp dpt:6789"',
   }
 
+  if $setup_pools == 'true' {
+
+    if $ceph_primary_mon == $::hostname {
+
+      if $glance_ceph_user != 'admin' {
+        exec { "create glance cephx user $glance_ceph_user":
+          command => "/usr/bin/ceph auth get-or-create client.$glance_ceph_user mon 'allow' osd 'allow * pool=$glance_ceph_pool mon 'allow *' > /etc/ceph/$ceph_cluster_name.keyring.client.$glance_ceph_user"
+          unless  => "/usr/bin/ceph auth list | grep -sq $glance_ceph_user",
+          require => Exec['create mon'],
+        }
+        exec { "copy glance user key $glance_ceph_user":
+          path => '/bin:/usr/bin',
+          command => "cp /etc/ceph/$ceph_cluster_name.keyring.client.$glance_ceph_user /home/$ceph_deploy_user/bootstrap/$ceph_cluster_name.keyring.client.$glance_ceph_user",
+          require => Exec["create glance cephx user $glance_ceph_user"],
+        }
+      }
+
+      if $cinder_rbd_user != 'admin' {
+        exec { "create cinder cephx user $cinder_rbd_user":
+          command => "/usr/bin/ceph auth get-or-create client.$cinder_rbd_user mon 'allow' osd 'allow * pool=$cinder_rbd_pool mon 'allow *' > /etc/ceph/$ceph_cluster_name.keyring.client.$cinder_rbd_user"
+          unless  => "/usr/bin/ceph auth list | grep -sq $cinder_rbd_user",
+          require => Exec['create mon'],
+        }
+        exec { 'copy cinder user key $cinder_rbd_user':
+          path => '/bin:/usr/bin',
+          command => "cp /etc/ceph/$ceph_cluster_name.keyring.client.$cinder_rbd_user /home/$ceph_deploy_user/bootstrap/$ceph_cluster_name.keyring.client.$cinder_rbd_user",
+          require => Exec["create cinder cephx user $cinder_rbd_user"],
+        }
+      }
+
+    }
+
+  }
 
 }

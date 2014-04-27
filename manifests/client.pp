@@ -35,6 +35,13 @@ class cephdeploy::client(
   $pass = $cephdeploy::params::pass,
   $primary_mon = $cephdeploy::params::primary_mon,
   $setup_virsh = $cephdeploy::params::setup_virsh,
+  $setup_pools = $cephdeploy::params::setup_pools,
+  $cinder_system_group = $cephdeploy::params::cinder_system_group,
+  $glance_system_group = $cephdeploy::params::glance_system_group,
+  $cephx_keys_permission_enforce = $cephdeploy::params::cephx_keys_permission_enforce,
+  $ceph_cluster_name = $cephdeploy::params::ceph_cluster_name,
+  $glance_ceph_user = $cephdeploy::params::glance_ceph_user,
+  $cinder_rbd_user = $cephdeploy::params::cinder_rbd_user,
 ) inherits cephdeploy::params {
 
 ## User setup
@@ -148,6 +155,21 @@ class cephdeploy::client(
     unless  => '/usr/bin/test -e /etc/ceph/ceph.conf',
   }
 
+  if $setup_pools == 'true' {
+    if $cephx_keys_permission_enforce == 'true' {
+
+      file { "/etc/ceph/$ceph_cluster_name.keyring.client.$glance_ceph_user":
+        group => "$glance_system_group",
+	mode => "0640",
+      }
+
+      file { "/etc/ceph/$ceph_cluster_name.keyring.client.$cinder_rbd_user":
+        group => "$cinder_system_group",
+        mode => "0640",
+      }
+    }
+  }
+
 
   if $setup_virsh == 'true' {
 
@@ -169,7 +191,7 @@ class cephdeploy::client(
     }
 
     exec { 'set-secret-value virsh':
-      command => "/usr/bin/virsh secret-set-value --secret $(cat /etc/ceph/virsh.secret) --base64 $(ceph auth get-key client.admin)",
+      command => "/usr/bin/virsh secret-set-value --secret $(cat /etc/ceph/virsh.secret) --base64 $(ceph auth get-key $cinder_rbd_user)",
       require => Exec['get-or-set virsh secret'],
     }
 

@@ -25,7 +25,16 @@ class cephdeploy::params {
   $ceph_deploy_password = getvar("::${variable_prefix}ceph_deploy_password")
 
   # The name of the Cinder RBD pool
-  $cinder_rbd_pool = getvar("::${variable_prefix}cinder_rbd_pool")
+  $cinder_rbd_pool = pick(getvar("::${variable_prefix}cinder_rbd_pool"),
+                         'rbdcinder')
+
+  # The name of the Cinder RBD CephX user
+  $cinder_rbd_user = pick(getvar("::${variable_prefix}cinder_rbd_user"),
+                         'admin')
+
+  # The name of the group the Cinder keyring file should belong to
+  $cinder_system_group = pick(getvar("::${variable_prefix}cinder_system_group"),
+                         'cinder')
 
   # The disks to use in the osdwrapper class
   $disks = getvar("::${variable_prefix}disks")
@@ -44,7 +53,20 @@ class cephdeploy::params {
   $primary_mon = getvar("::${variable_prefix}primary_mon")
 
   # The name of the Glance RBD pool
-  $glance_ceph_pool = getvar("::${variable_prefix}glance_ceph_pool")
+  $glance_ceph_pool = pick(getvar("::${variable_prefix}glance_ceph_pool"),
+                         'rbdglance')
+
+  # The name of the Glance RBD CephX user
+  $glance_ceph_user = pick(getvar("::${variable_prefix}glance_ceph_user"),
+                         'admin')
+
+  # The name of the group the Glance keyring file should belong to
+  $glance_system_group = pick(getvar("::${variable_prefix}glance_system_group"),
+                         'glance')
+
+  # Whether or not to enforce permissions on the CephX keys
+  $cephx_keys_permission_enforce = pick(getvar("::${variable_prefix}cephx_keys_permission_enforce"),
+                         'false')
 
   # Whether a note is a compute node or not
   $has_compute = pick(getvar("::${variable_prefix}has_compute"),
