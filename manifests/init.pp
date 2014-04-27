@@ -60,6 +60,7 @@ class cephdeploy(
   $ceph_release = $cephdeploy::params::ceph_release,
   $has_compute = $cephdeploy::params::has_compute,
   $ceph_install_repositories = $cephdeploy::params::ceph_install_repositories,
+  $setup_pools = $cephdeploy::params::setup_pools,
 ) inherits cephdeploy::params {
 
 ## User setup
@@ -186,6 +187,24 @@ class cephdeploy(
     order   => '01',
     content => template('cephdeploy/ceph.conf.erb'),
     require => File["/home/$ceph_deploy_user/bootstrap"],
+  }
+
+  if $setup_pools == 'true' {
+
+    concat::fragmet { 'glance':
+      target => "/home/$ceph_deploy_user/bootstrap/ceph.conf",
+      order => '02',
+      content => template('cephdeploy/glance.ceph.conf.erb'),
+      require => File["/home/$ceph_deploy_user/bootstrap"],
+    }
+
+    concat::fragmet { 'cinder':
+      target => "/home/$ceph_deploy_user/bootstrap/ceph.conf",
+      order => '02',
+      content => template('cephdeploy/cinder.ceph.conf.erb'),
+      require => File["/home/$ceph_deploy_user/bootstrap"],
+    }
+
   }
 
 ## Keyring setup
