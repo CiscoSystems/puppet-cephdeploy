@@ -42,6 +42,9 @@
 # [*ceph_release*]
 #   (required) The Ceph release to use.
 #
+# [*ceph_install_repositories*]
+#   (required) Whether or not to install package repo files
+#
 # [*has_compute*]
 #   (required) Whether or not the host has nova-compute running.
 
@@ -56,6 +59,7 @@ class cephdeploy(
   $ceph_cluster_network= $cephdeploy::params::ceph_cluster_network,
   $ceph_release = $cephdeploy::params::ceph_release,
   $has_compute = $cephdeploy::params::has_compute,
+  $ceph_install_repositories = $cephdeploy::params::ceph_install_repositories,
 ) inherits cephdeploy::params {
 
 ## User setup
@@ -147,14 +151,18 @@ class cephdeploy(
 
   case $::osfamily {
     'RedHat', 'Suse': {
-      cephdeploy::yum {'ceph-packages':
-	release => $ceph_release,
+      if $ceph_install_repositories == 'true' {
+        cephdeploy::yum {'ceph-packages':
+	  release => $ceph_release,
+        }
       }
       $check_cmd = '/bin/rpm -qa | grep "ceph-[0-9]"'
     }
     'Debian': {
-      cephdeploy::apt {'ceph-packages':
-        release => $ceph_release,
+      if $ceph_install_repositories == 'true' {
+        cephdeploy::apt {'ceph-packages':
+          release => $ceph_release,
+        }
       }
       $check_cmd = '/usr/bin/dpkg -l | grep ceph-common'
     }
