@@ -82,7 +82,7 @@ chmod 644 /home/$ceph_deploy_user/bootstrap/*
 
       if $glance_ceph_user != 'admin' {
         exec { "create glance cephx user $glance_ceph_user":
-          command => "/usr/bin/ceph auth get-or-create client.$glance_ceph_user mon 'allow' osd 'allow * pool=$glance_ceph_pool mon 'allow *' > /etc/ceph/$ceph_cluster_name.keyring.client.$glance_ceph_user"
+          command => "/usr/bin/ceph auth get-or-create client.$glance_ceph_user mon 'allow' osd 'allow * pool=$glance_ceph_pool mon 'allow *' > /etc/ceph/$ceph_cluster_name.keyring.client.$glance_ceph_user",
           unless  => "/usr/bin/ceph auth list | grep -sq $glance_ceph_user",
           require => Exec['create mon'],
         }
@@ -95,7 +95,7 @@ chmod 644 /home/$ceph_deploy_user/bootstrap/*
 
       if $cinder_rbd_user != 'admin' {
         exec { "create cinder cephx user $cinder_rbd_user":
-          command => "/usr/bin/ceph auth get-or-create client.$cinder_rbd_user mon 'allow' osd 'allow * pool=$cinder_rbd_pool mon 'allow *' > /etc/ceph/$ceph_cluster_name.keyring.client.$cinder_rbd_user"
+          command => "/usr/bin/ceph auth get-or-create client.$cinder_rbd_user mon 'allow' osd 'allow * pool=$cinder_rbd_pool mon 'allow *' > /etc/ceph/$ceph_cluster_name.keyring.client.$cinder_rbd_user",
           unless  => "/usr/bin/ceph auth list | grep -sq $cinder_rbd_user",
           require => Exec['create mon'],
         }
