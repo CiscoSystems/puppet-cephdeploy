@@ -61,6 +61,9 @@ class cephdeploy(
   $has_compute = $cephdeploy::params::has_compute,
   $ceph_install_repositories = $cephdeploy::params::ceph_install_repositories,
   $setup_pools = $cephdeploy::params::setup_pools,
+  $ceph_cluster_name = $cephdeploy::params::ceph_cluster_name,
+  $glance_ceph_user = $cephdeploy::params::glance_ceph_user,
+  $glance_ceph_pool = $cephdeploy::params::glance_ceph_pool,
 ) inherits cephdeploy::params {
 
 ## User setup
@@ -190,6 +193,9 @@ class cephdeploy(
   }
 
   if $setup_pools == 'true' {
+
+    $glance_cephx_keyring_path = "/etc/ceph/$ceph_cluster_name.keyring.client.$glance_ceph_user"
+    $cinder_cephx_keyring_path = "/etc/ceph/$ceph_cluster_name.keyring.client.$cinder_rbd_user"
 
     concat::fragment { 'glance':
       target => "/home/$ceph_deploy_user/bootstrap/ceph.conf",
