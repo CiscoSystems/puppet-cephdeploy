@@ -84,6 +84,9 @@ class cephdeploy::params {
   # The Ceph deploy user password
   $pass = getvar("::${variable_prefix}pass")
 
+  # The type of Ceph deploy account
+  $ceph_deploy_system_user = pick(getvar("::${variable_prefix}ceph_deploy_system_user"), false)
+
   # The Ceph release to use
   $ceph_release = pick(getvar("::${variable_prefix}ceph_release"),
                          'emperor')
