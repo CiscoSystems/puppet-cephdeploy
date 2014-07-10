@@ -44,6 +44,7 @@ class cephdeploy::client(
   $glance_ceph_user = $cephdeploy::params::glance_ceph_user,
   $cinder_rbd_user = $cephdeploy::params::cinder_rbd_user,
   $puppet_install_repositories = $cephdeploy::params::puppet_install_repositories,
+  $ceph_monitor_fsid = $cephdeploy::params::ceph_monitor_fsid,
 ) inherits cephdeploy::params {
 
 ## User setup
