@@ -31,6 +31,7 @@
 
 
 class cephdeploy::client(
+  $ceph_release = $cephdeploy::params::ceph_release,
   $ceph_deploy_user = $cephdeploy::params::ceph_deploy_user,
   $pass = $cephdeploy::params::pass,
   $ceph_primary_mon = $cephdeploy::params::primary_mon,
