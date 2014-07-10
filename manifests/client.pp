@@ -196,8 +196,15 @@ class cephdeploy::client(
 
   if $setup_virsh == 'true' {
 
-    if !defined(Package['libvirt-bin']) {
-      package {'libvirt-bin':
+    case $::osfamily {
+      'RedHat', 'Suse': {
+        $libvirt_package = 'libvirt'
+      'Debian': {
+        $libvirt_package = 'libvirt-bin'
+    }
+
+    if !defined(Package[$libvirt_package]) {
+      package {$libvirt_package:
         ensure => installed,
       }
     }
