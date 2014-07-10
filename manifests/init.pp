@@ -199,8 +199,8 @@ class cephdeploy(
 
   if $setup_pools == 'true' {
 
-    $glance_cephx_keyring_path = "/etc/ceph/$ceph_cluster_name.keyring.client.$glance_ceph_user"
-    $cinder_cephx_keyring_path = "/etc/ceph/$ceph_cluster_name.keyring.client.$cinder_rbd_user"
+    $glance_cephx_keyring_path = "/etc/ceph/$ceph_cluster_name.client.$glance_ceph_user.keyring"
+    $cinder_cephx_keyring_path = "/etc/ceph/$ceph_cluster_name.client.$cinder_rbd_user.keyring"
 
     concat::fragment { 'glance':
       target => "/home/$ceph_deploy_user/bootstrap/ceph.conf",
