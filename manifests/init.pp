@@ -41,6 +41,11 @@
 #
 # [*has_compute*]
 #   (required) Whether or not the host has nova-compute running.
+#
+# [*singlenode*]
+#  (optional) Tune CRUSH map to work on single-node Ceph deployments
+#  Defaults to undefined
+#
 
 
 class cephdeploy(
@@ -51,7 +56,8 @@ class cephdeploy(
   $ceph_monitor_address,
   $ceph_public_network,
   $ceph_cluster_network,
-  $has_compute = false,
+  $has_compute          = false,
+  $singlenode           = undef,
 ){
 
 ## User setup
