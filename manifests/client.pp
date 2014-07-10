@@ -164,7 +164,7 @@ class cephdeploy::client(
   # get and install config and keys
 
   exec { 'get keys':
-    command => "/usr/bin/scp $ceph_deploy_user@${primary_mon}:bootstrap/{*.key*,ceph.conf} .",
+    command => "/usr/bin/scp $ceph_deploy_user@$ceph_primary_mon:bootstrap/{*.key*,ceph.conf} .",
     user    => $ceph_deploy_user,
     cwd     => "/home/$ceph_deploy_user/bootstrap",
     require => [ File["/home/$ceph_deploy_user/bootstrap"], File["/home/$ceph_deploy_user/.ssh/config"] ],
