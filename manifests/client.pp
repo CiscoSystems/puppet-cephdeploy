@@ -223,7 +223,7 @@ class cephdeploy::client(
     }
 
     exec { 'set-secret-value virsh':
-      command => "/usr/bin/virsh secret-set-value --secret $(cat /etc/ceph/virsh.secret) --base64 $(ceph auth get-key $cinder_rbd_user)",
+      command => "/usr/bin/virsh secret-set-value --secret $(cat /etc/ceph/virsh.secret) --base64 $(ceph auth get-key client.$cinder_rbd_user)",
       require => Exec['get-or-set virsh secret'],
     }
 
