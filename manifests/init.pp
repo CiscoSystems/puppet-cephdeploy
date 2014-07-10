@@ -1,3 +1,14 @@
+# == Class: cephdeploy
+#
+# Installs and configures ceph using ceph-deploy
+#
+# === Parameters:
+#
+# [*singlenode*]
+#  (optional) Tune CRUSH map to work on single-node Ceph deployments
+#  Defaults to undefined
+#
+
 class cephdeploy(
   $user                 = hiera('ceph_deploy_user'),
   $ceph_deploy_user     = hiera('ceph_deploy_user'),
@@ -10,6 +21,7 @@ class cephdeploy(
   $ceph_cluster_network = hiera('ceph_cluster_network'),
   $ceph_monitor_secret  = hiera('ceph_monitor_secret'),
   $has_compute          = false,
+  $singlenode           = undef,
 ){
 
 ## User setup
