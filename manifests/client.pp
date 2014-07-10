@@ -199,8 +199,10 @@ class cephdeploy::client(
     case $::osfamily {
       'RedHat', 'Suse': {
         $libvirt_package = 'libvirt'
+      }
       'Debian': {
         $libvirt_package = 'libvirt-bin'
+      }
     }
 
     if !defined(Package[$libvirt_package]) {
