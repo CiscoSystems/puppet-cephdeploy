@@ -68,6 +68,8 @@ class cephdeploy(
   $ceph_cluster_name = $cephdeploy::params::ceph_cluster_name,
   $glance_ceph_user = $cephdeploy::params::glance_ceph_user,
   $glance_ceph_pool = $cephdeploy::params::glance_ceph_pool,
+  $cinder_rbd_user = $cephdeploy::params::cinder_rbd_user,
+  $cinder_rbd_pool = $cephdeploy::params::cinder_rbd_pool,
 ) inherits cephdeploy::params {
 
 ## User setup
