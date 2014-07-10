@@ -19,7 +19,7 @@
 # [*ceph_deploy_user*]
 #   (required) The cephdeploy account username
 #
-# [*primary_mon*]
+# [*ceph_primary_mon*]
 #   (require) The primary MON in the monmap.
 #
 # [*pass*]
@@ -33,7 +33,7 @@
 class cephdeploy::client(
   $ceph_deploy_user = $cephdeploy::params::ceph_deploy_user,
   $pass = $cephdeploy::params::pass,
-  $primary_mon = $cephdeploy::params::primary_mon,
+  $ceph_primary_mon = $cephdeploy::params::primary_mon,
   $setup_virsh = $cephdeploy::params::setup_virsh,
   $setup_pools = $cephdeploy::params::setup_pools,
   $cinder_system_group = $cephdeploy::params::cinder_system_group,
