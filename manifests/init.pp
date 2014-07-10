@@ -138,7 +138,7 @@ class cephdeploy(
   exec { "install ceph":
     cwd     => "/home/$user/bootstrap",
     command => "/usr/bin/ceph-deploy install --no-adjust-repos $::hostname",
-    unless  => '/usr/bin/dpkg -l | grep ceph-common',
+    unless  => '/usr/bin/test -f /usr/bin/ceph',
     require => [ Package['ceph-deploy'], File['ceph.mon.keyring'], File["/home/$user/bootstrap"] ],
   }
 
