@@ -149,10 +149,10 @@ class cephdeploy::client(
     require => File["/home/$ceph_deploy_user/bootstrap"],
   }
 
-  package {'python-ceph':
-    ensure  => present,
-    require => File["/home/$ceph_deploy_user/bootstrap"],
-  }
+  # package {'python-ceph':
+  #  ensure  => present,
+  #  require => File["/home/$ceph_deploy_user/bootstrap"],
+  # }
 
   file { '/etc/ceph':
     ensure  => directory,
