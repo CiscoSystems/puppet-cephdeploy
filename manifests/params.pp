@@ -95,7 +95,8 @@ class cephdeploy::params {
   $ceph_monitor_address = getvar("::${variable_prefix}ceph_monitor_address")
 
   # The name of the Ceph cluster
-  $ceph_cluster_name = getvar("::${variable_prefix}ceph_cluster_name")
+  $ceph_cluster_name = pick(getvar("::${variable_prefix}ceph_cluster_name"),
+                         'ceph')
 
   # Whether or not to install package repositories
   $ceph_install_repositories = pick(getvar("::${variable_prefix}ceph_install_repositories"),
