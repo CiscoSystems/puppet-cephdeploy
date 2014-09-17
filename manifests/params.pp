@@ -109,7 +109,7 @@ class cephdeploy::params {
           getvar("::${variable_prefix}pass"))
 
   # The type of Ceph deploy account
-  $ceph_deploy_system_user = pick(hiera("cephdeploy::${variable_prefix}ceph_deploy_system_user")
+  $ceph_deploy_system_user = pick(hiera("cephdeploy::${variable_prefix}ceph_deploy_system_user"),
                              getvar("::${variable_prefix}ceph_deploy_system_user"),
                              false)
 
