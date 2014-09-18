@@ -39,7 +39,7 @@
 
 
 define cephdeploy::osd(
-  $setup_pools = true,
+  $setup_pools,
   $ceph_deploy_user,
   $ceph_primary_mon,
   $ceph_cluster_interface,
