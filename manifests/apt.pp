@@ -13,10 +13,13 @@ define cephdeploy::apt (
     before => Package['ceph-deploy'],
   }
 
-  apt::source { 'ceph-extras':
-    location => "http://ceph.com/packages/ceph-extras/debian/",
-    release => $::lsbdistcodename,
-    require => Apt::Key['ceph'],
-    before => Package['ceph-deploy'],
+  case $::lsbdistcodename {
+    'lucid', 'precise': {
+      apt::source { 'ceph-extras':
+      location => "http://ceph.com/packages/ceph-extras/debian/",
+      release => $::lsbdistcodename,
+      require => Apt::Key['ceph'],
+      before => Package['ceph-deploy'],
+    }
   }
 }
