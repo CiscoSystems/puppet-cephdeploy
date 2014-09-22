@@ -94,7 +94,7 @@ chmod 644 /home/$ceph_deploy_user/bootstrap/*
         }
         exec { "copy glance user key $glance_ceph_user":
           path => '/bin:/usr/bin',
-          command => "cp /etc/ceph/$ceph_cluster_name.client.$glance_ceph_user.keyring /home/$ceph_deploy_user/bootstrap/$ceph_cluster_name.client.$glance_ceph_user.keyring",
+          command => "cp /etc/ceph/$ceph_cluster_name.client.$glance_ceph_user.keyring /home/$ceph_deploy_user/bootstrap/$ceph_cluster_name.client.$glance_ceph_user.keyring && chown $ceph_deploy_user:$ceph_deploy_user /home/$ceph_deploy_user/bootstrap/$ceph_cluster_name.client.$glance_ceph_user.keyring",
           require => Exec["create glance cephx user $glance_ceph_user"],
         }
       }
@@ -107,7 +107,7 @@ chmod 644 /home/$ceph_deploy_user/bootstrap/*
         }
         exec { 'copy cinder user key $cinder_rbd_user':
           path => '/bin:/usr/bin',
-          command => "cp /etc/ceph/$ceph_cluster_name.client.$cinder_rbd_user.keyring /home/$ceph_deploy_user/bootstrap/$ceph_cluster_name.client.$cinder_rbd_user.keyring",
+          command => "cp /etc/ceph/$ceph_cluster_name.client.$cinder_rbd_user.keyring /home/$ceph_deploy_user/bootstrap/$ceph_cluster_name.client.$cinder_rbd_user.keyring && chown $ceph_deploy_user:$ceph_deploy_user /home/$ceph_deploy_user/bootstrap/$ceph_cluster_name.client.$cinder_rbd_user.keyring",
           require => Exec["create cinder cephx user $cinder_rbd_user"],
         }
       }
