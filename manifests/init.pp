@@ -199,6 +199,20 @@ class cephdeploy(
     require => File["/home/$ceph_deploy_user/bootstrap"],
   }
 
+  concat { "/home/$ceph_deploy_user/bootstrap/ceph.initial.conf":
+    owner   => $ceph_deploy_user,
+    group   => $ceph_deploy_user,
+    path    => "/home/$ceph_deploy_user/bootstrap/ceph.initial.conf",
+    require => File["/home/$ceph_deploy_user/bootstrap"],
+  }
+
+  concat::fragment { 'ceph':
+    target  => "/home/$ceph_deploy_user/bootstrap/ceph.initial.conf",
+    order   => '01',
+    content => template('cephdeploy/ceph.initial.conf.erb'),
+    require => File["/home/$ceph_deploy_user/bootstrap"],
+  }
+
   if $setup_pools == 'true' {
 
     $glance_cephx_keyring_path = "/etc/ceph/$ceph_cluster_name.client.$glance_ceph_user.keyring"
