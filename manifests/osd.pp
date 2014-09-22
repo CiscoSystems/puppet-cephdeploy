@@ -80,7 +80,7 @@ define cephdeploy::osd(
     command => "/usr/bin/scp $ceph_deploy_user@$ceph_primary_mon:bootstrap/*.key* .",
     user    => $ceph_deploy_user,
     cwd     => "/home/$ceph_deploy_user/bootstrap",
-    require => [ Exec['install ceph'], File["/etc/sudoers.d/$ceph_deploy_user"], Exec["get config $disk"] ],
+    require => [ Exec['install ceph'], Exec['copy keys'], File["/etc/sudoers.d/$ceph_deploy_user"], Exec["get config $disk"] ],
     unless  => '/usr/bin/test -e /home/$ceph_deploy_user/bootstrap/$cluster.bootstrap-osd.keyring',
   }
 
