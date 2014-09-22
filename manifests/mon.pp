@@ -56,6 +56,12 @@ class cephdeploy::mon(
     provider => shell,
   }
 
+  exec { 'gather keys':
+    cwd      => "/home/$ceph_deploy_user/bootstrap",
+    command  => "/usr/bin/ceph-deploy gatherkeys $::hostname",
+    require  => Exec['create mon'],
+  }
+
   if $ceph_primary_mon == $::hostname {
     exec { 'copy keys':
       path => '/bin:/usr/bin',
@@ -66,7 +72,7 @@ cp /var/lib/ceph/mon/ceph-$ceph_primary_mon/keyring /home/$ceph_deploy_user/boot
 chown $ceph_deploy_user:$ceph_deploy_user /home/$ceph_deploy_user/bootstrap/* &&
 chmod 644 /home/$ceph_deploy_user/bootstrap/*
 ",
-      require => Exec['create mon'],
+      require => Exec['create mon'], Exec['gather keys'],
       unless => "/usr/bin/test -e /home/$ceph_deploy_user/bootstrap/$cluster.bootstrap-osd.keyring",
     }
   }
@@ -84,7 +90,7 @@ chmod 644 /home/$ceph_deploy_user/bootstrap/*
         exec { "create glance cephx user $glance_ceph_user":
           command => "/usr/bin/ceph auth get-or-create client.$glance_ceph_user mon 'allow *' osd 'allow * pool=$glance_ceph_pool' > /etc/ceph/$ceph_cluster_name.client.$glance_ceph_user.keyring",
           unless  => "/usr/bin/ceph auth list | grep -sq $glance_ceph_user",
-          require => Exec['create mon'],
+          require => Exec['create mon'], Exec['gather keys'],
         }
         exec { "copy glance user key $glance_ceph_user":
           path => '/bin:/usr/bin',
@@ -97,7 +103,7 @@ chmod 644 /home/$ceph_deploy_user/bootstrap/*
         exec { "create cinder cephx user $cinder_rbd_user":
           command => "/usr/bin/ceph auth get-or-create client.$cinder_rbd_user mon 'allow *' osd 'allow * pool=$cinder_rbd_pool' > /etc/ceph/$ceph_cluster_name.client.$cinder_rbd_user.keyring",
           unless  => "/usr/bin/ceph auth list | grep -sq $cinder_rbd_user",
-          require => Exec['create mon'],
+          require => Exec['create mon'], Exec['gather keys'],
         }
         exec { 'copy cinder user key $cinder_rbd_user':
           path => '/bin:/usr/bin',
