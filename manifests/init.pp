@@ -206,7 +206,7 @@ class cephdeploy(
     require => File["/home/$ceph_deploy_user/bootstrap"],
   }
 
-  concat::fragment { 'ceph':
+  concat::fragment { 'ceph-tmp':
     target  => "/home/$ceph_deploy_user/bootstrap/ceph.initial.conf",
     order   => '01',
     content => template('cephdeploy/ceph.initial.conf.erb'),
