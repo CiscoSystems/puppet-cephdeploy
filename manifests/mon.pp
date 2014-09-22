@@ -51,7 +51,7 @@ class cephdeploy::mon(
   exec { 'create mon':
     cwd      => "/home/$ceph_deploy_user/bootstrap",
     command  => "/usr/bin/ceph-deploy --ceph-conf=/home/$ceph_deploy_user/bootstrap/ceph.initial.conf mon create $::hostname",
-    unless   => '/usr/bin/sudo /usr/bin/ceph --cluster=ceph --admin-daemon /var/run/ceph/`hostname -s`-mon.ceph.asok mon_status',
+    unless   => "/usr/bin/sudo /usr/bin/ceph --cluster=ceph --admin-daemon /var/run/ceph/$ceph_cluster_name-mon.`hostname -s`.asok mon_status",
     require  => Exec['install ceph'],
     provider => shell,
   }
