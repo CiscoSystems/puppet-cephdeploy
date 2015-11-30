@@ -104,6 +104,6 @@ class cephdeploy::params {
 
   # If this applies to a single-node setup or not
   $singlenode = pick(getvar("::${variable_prefix}singlenode"),
-                         'false')
+                         undef)
 
 }
