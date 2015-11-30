@@ -259,11 +259,7 @@ class cephdeploy(
   exec { 'install ceph':
     cwd     => "/home/$ceph_deploy_user/bootstrap",
     command => "/usr/bin/ceph-deploy install --no-adjust-repos $::hostname",
-<<<<<<< HEAD
     unless  => $check_cmd,
-=======
-    unless  => '/usr/bin/test -f /usr/bin/ceph',
->>>>>>> dontalton/puppet_openstack_builder
     require => [ Package['ceph-deploy'], File['ceph.mon.keyring'], File["/home/$ceph_deploy_user/bootstrap"] ],
   }
 
