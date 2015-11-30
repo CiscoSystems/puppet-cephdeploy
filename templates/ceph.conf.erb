@@ -7,3 +7,6 @@ osd journal size = 1024
 filestore xattr use omap = true
 public network = <%= @ceph_public_network %>
 cluster network = <%= @ceph_cluster_network %>
+<% if @singlenode -%>
+osd crush chooseleaf type = 0
+<% end -%>

@@ -50,6 +50,11 @@
 #
 # [*has_compute*]
 #   (required) Whether or not the host has nova-compute running.
+#
+# [*singlenode*]
+#  (optional) Tune CRUSH map to work on single-node Ceph deployments
+#  Defaults to undefined
+#
 
 
 class cephdeploy(
@@ -70,6 +75,7 @@ class cephdeploy(
   $glance_ceph_pool = $cephdeploy::params::glance_ceph_pool,
   $cinder_rbd_user = $cephdeploy::params::cinder_rbd_user,
   $cinder_rbd_pool = $cephdeploy::params::cinder_rbd_pool,
+  $singlenode = $cephdeploy::params::singlenode,
 ) inherits cephdeploy::params {
 
 ## User setup
@@ -253,7 +259,11 @@ class cephdeploy(
   exec { 'install ceph':
     cwd     => "/home/$ceph_deploy_user/bootstrap",
     command => "/usr/bin/ceph-deploy install --no-adjust-repos $::hostname",
+<<<<<<< HEAD
     unless  => $check_cmd,
+=======
+    unless  => '/usr/bin/test -f /usr/bin/ceph',
+>>>>>>> dontalton/puppet_openstack_builder
     require => [ Package['ceph-deploy'], File['ceph.mon.keyring'], File["/home/$ceph_deploy_user/bootstrap"] ],
   }
 
