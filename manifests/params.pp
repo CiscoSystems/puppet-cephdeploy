@@ -70,7 +70,7 @@ class cephdeploy::params {
 
   # Whether a note is a compute node or not
   $has_compute = pick(getvar("::${variable_prefix}has_compute"),
-                         true)
+                         "true")
 
   # The Ceph MON cluster fsid
   $ceph_monitor_fsid = getvar("::${variable_prefix}ceph_monitor_fsid")
