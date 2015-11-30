@@ -70,7 +70,7 @@ class cephdeploy::params {
 
   # Whether a note is a compute node or not
   $has_compute = pick(getvar("::${variable_prefix}has_compute"),
-                         'true')
+                         true)
 
   # The Ceph MON cluster fsid
   $ceph_monitor_fsid = getvar("::${variable_prefix}ceph_monitor_fsid")
@@ -101,4 +101,9 @@ class cephdeploy::params {
   # Whether or not to install package repositories
   $ceph_install_repositories = pick(getvar("::${variable_prefix}ceph_install_repositories"),
                          'true')
+
+  # If this applies to a single-node setup or not
+  $singlenode = pick(getvar("::${variable_prefix}singlenode"),
+                         undef)
+
 }
