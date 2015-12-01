@@ -1,0 +1,9 @@
+[global]
+fsid = <%= @ceph_monitor_fsid %>
+mon initial members = <%= @mon_initial_members %>
+mon host = <%= @mon_initial_members %>
+auth supported = cephx
+osd journal size = 1024
+filestore xattr use omap = true
+public network = <%= @ceph_public_network %>
+cluster network = <%= @ceph_cluster_network %>

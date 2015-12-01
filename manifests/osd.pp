@@ -39,7 +39,7 @@
 
 
 define cephdeploy::osd(
-  $setup_pools = true,
+  $setup_pools,
   $ceph_deploy_user,
   $ceph_primary_mon,
   $ceph_cluster_interface,
@@ -53,6 +53,7 @@ define cephdeploy::osd(
   $disk_hash = $name
   $disk_array = split($disk_hash, ':')
   $disk = $disk_array[0]
+  $disk_identifier = regsubst($disk_array[0], '.*/', '')
   $disk_journal = $disk_array[1]
   if $disk_journal {
     $disk_journal_real = $disk_journal
@@ -64,7 +65,7 @@ define cephdeploy::osd(
      cwd     => "/home/$ceph_deploy_user/bootstrap",
      command => "/usr/bin/ceph-deploy --overwrite-conf osd create $::hostname:$disk:$disk_journal_real",
      require => Exec["zap $disk"],
-     unless  => "/usr/bin/test -e /home/$ceph_deploy_user/zapped/$disk",
+     unless  => "/usr/bin/test -e /home/$ceph_deploy_user/zapped/$disk_identifier",
   }
 
   exec { "get config $disk":
@@ -93,10 +94,10 @@ define cephdeploy::osd(
     cwd     => "/home/$ceph_deploy_user/bootstrap",
     command => "/usr/bin/ceph-deploy disk zap $::hostname:$disk",
     require => [ Exec['install ceph'], Exec["gatherkeys_$disk"] ],
-    unless  => "/usr/bin/test -e /home/$ceph_deploy_user/zapped/$disk",
+    unless  => "/usr/bin/test -e /home/$ceph_deploy_user/zapped/$disk_identifier",
   }
 
-  file { "/home/$ceph_deploy_user/zapped/$disk":
+  file { "/home/$ceph_deploy_user/zapped/$disk_identifier":
     ensure  => present,
     require => [ Exec["zap $disk"], Exec["create osd $disk"], File["/home/$ceph_deploy_user/zapped"] ],
   }
@@ -106,7 +107,7 @@ define cephdeploy::osd(
     unless  => '/sbin/iptables -L | grep "multiport dports 6800:6810"',
   }
 
-  if $setup_pools {
+  if $setup_pools == 'true' {
 
     exec { "create glance images pool $disk":
       command => "/usr/bin/ceph osd pool create $glance_ceph_pool 128",

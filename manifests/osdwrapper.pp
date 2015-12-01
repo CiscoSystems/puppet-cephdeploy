@@ -43,17 +43,23 @@
 
 
 class cephdeploy::osdwrapper(
-  $disks,
-  $setup_pools = true,
-  $ceph_deploy_user,
-  $ceph_primary_mon,
-  $ceph_cluster_interface,
-  $ceph_cluster_network,
-  $glance_ceph_pool,
-  $cinder_rbd_pool,
-){
+  $disks = $cephdeploy::params::disks,
+  $setup_pools = $cephdeploy::params::setup_pools,
+  $ceph_deploy_user = $cephdeploy::params::ceph_deploy_user,
+  $ceph_primary_mon = $cephdeploy::params::ceph_primary_mon,
+  $ceph_cluster_interface = $cephdeploy::params::ceph_cluster_interface,
+  $ceph_cluster_network = $cephdeploy::params::ceph_cluster_network,
+  $glance_ceph_pool = $cephdeploy::params::glance_ceph_pool,
+  $cinder_rbd_pool = $cephdeploy::params::cinder_rbd_pool,
+) inherits cephdeploy::params {
 
-  cephdeploy::osd { $disks:
+  if is_string($disks) {
+    $actual_disks = split($disks,',')
+  } else {
+    $actual_disks = $disks
+  }
+
+  cephdeploy::osd { $actual_disks:
     setup_pools            => $setup_pools,
     ceph_deploy_user       => $ceph_deploy_user,
     ceph_primary_mon       => $ceph_primary_mon,

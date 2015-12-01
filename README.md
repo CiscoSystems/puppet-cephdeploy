@@ -28,7 +28,7 @@ site.pp variables
     $cinder_rbd_secret_uuid = 'e80afa94-a64c-486c-9e34-d55e85f26406'
     $mon_initial_members = 'control-server'
     $ceph_primary_mon = 'control-server'
-    $ceph_monitor_address = '10.0.0.1,' yes leave the trailing comma intact for now
+    $ceph_monitor_address = '10.0.0.1,' # yes leave the trailing comma intact for now
     $ceph_deploy_user = 'k9de9kdkasdok'
     $ceph_deploy_password = 'dsaadsadasdk09as09kdsad'
     $ceph_cluster_interface = 'eth1'
@@ -45,28 +45,58 @@ This is the base class that installs ceph and configures the requirements on the
 
 Install
 -------
-    class {'cephdeploy': }
+    class {'cephdeploy':
+      ceph_deploy_user     => "$::ceph_deploy_user",
+      ceph_deploy_password => "$::ceph_deploy_password",
+      ceph_monitor_fsid    => "$::ceph_monitor_fsid",
+      mon_initial_members  => "$::mon_initial_members",
+      ceph_monitor_address => "$::ceph_monitor_address",
+      ceph_public_network  => "$::ceph_public_network",
+      ceph_cluster_network => "$::ceph_cluster_network",
+      has_compute          => false,
+    }
 
-    #on a compute node
-    class {'cephdeploy': has_compute => true, }
+
+    # on a compute node
+    class {'cephdeploy':
+      ceph_deploy_user     => "$::ceph_deploy_user",
+      ceph_deploy_password => "$::ceph_deploy_password",
+      ceph_monitor_fsid    => "$::ceph_monitor_fsid",
+      mon_initial_members  => "$::mon_initial_members",
+      ceph_monitor_address => "$::ceph_monitor_address",
+      ceph_public_network  => "$::ceph_public_network",
+      ceph_cluster_network => "$::ceph_cluster_network",
+      has_compute          => true,
+    }
 
 
 Create a MON
 ------------
 
-    {'cephdeploy::mon': }
+    class {'cephdeploy::mon':
+      ceph_deploy_user      => "$::ceph_deploy_user",
+      ceph_cluster_name     => "$::ceph_cluster_name",
+      ceph_primary_mon      => "$::ceph_primary_mon",
+      ceph_public_network   => "$::ceph_public_network",
+      ceph_public_interface => "$::ceph_public_interface",
+    }
+
 
 
 Create an OSD
 -------------
 Multiple disks call for multiple declaration.
 
-    cephdeploy::osd { 'sdb': }
-    cephdeploy::osd { 'sdc': }
-
-When creating you first osd node, you will want to pass "setup_pools", this will create the glance and cinder rbd pools.
-
-    cephdeploy::osd { 'sdb': setup_pools => true, }
+    class { 'cephdeploy::osdwrapper':
+      disks                  => 'sdb',
+      setup_pools            => true,
+      ceph_deploy_user       => "$::ceph_deploy_user",
+      ceph_primary_mon       => "$::ceph_primary_mon",
+      ceph_cluster_interface => "$::ceph_cluster_interface",
+      ceph_cluster_network   => "$::ceph_cluster_network",
+      glance_ceph_pool       => "$::glance_rbd_pool",
+      cinder_rbd_pool        => "$::cinder_rbd_pool",
+    }
 
 
 Create an MDS
